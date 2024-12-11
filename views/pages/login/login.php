@@ -7,10 +7,17 @@ if (isset($_SESSION['admin_id'])) {
     header('Location: /views/pages/dashboard/dashboard.php');
     exit();
 }
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_once __DIR__ . '/../../../controllers/AuthController.php';
+    $authController = new AuthController();
+    $message = $authController->handleLoginForm($_POST['email'], $_POST['password']);
+}
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -21,6 +28,7 @@ if (isset($_SESSION['admin_id'])) {
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600&display=swap" rel="stylesheet">
     <title>Login</title>
 </head>
+
 <body>
     <!----------------------- Main Container -------------------------->
     <div class="container d-flex justify-content-center align-items-center min-vh-100">
@@ -42,24 +50,24 @@ if (isset($_SESSION['admin_id'])) {
                         <p>We are happy to have you back.</p>
                     </div>
 
-                    <?php 
+                    <?php
                     // Display login error message if exists
                     if (!empty($message)) {
                         echo "<div class='alert alert-danger'>" . htmlspecialchars($message) . "</div>";
                     }
                     ?>
 
-                    <form action="login.php" method="POST">
+                    <form action="" method="POST">
                         <div class="input-group mb-3">
-                            <input type="text" name="email" class="form-control form-control-lg bg-light fs-6" 
-                                placeholder="Enter your email address" 
-                                style="font-weight: 400;" 
+                            <input type="text" name="email" class="form-control form-control-lg bg-light fs-6"
+                                placeholder="Enter your email address"
+                                style="font-weight: 400;"
                                 required>
                         </div>
                         <div class="input-group mb-1">
-                            <input type="password" name="password" class="form-control form-control-lg bg-light fs-6" 
-                                placeholder="Enter your password" 
-                                style="font-weight: 400;" 
+                            <input type="password" name="password" class="form-control form-control-lg bg-light fs-6"
+                                placeholder="Enter your password"
+                                style="font-weight: 400;"
                                 required>
                         </div>
                         <div class="input-group mb-5 d-flex justify-content-between">
@@ -89,4 +97,5 @@ if (isset($_SESSION['admin_id'])) {
         </div>
     </div>
 </body>
+
 </html>
