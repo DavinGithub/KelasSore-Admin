@@ -20,7 +20,7 @@ class AuthController {
             $_SESSION['admin_id'] = $admin['id']; // ID pengguna
             $_SESSION['admin_email'] = $admin['email']; // Email pengguna
             $_SESSION['admin_name'] = $admin['name']; // Nama pengguna
-            header('Location: ../pages/dashboard/dashboard.php'); // Sesuaikan path
+            header('Location: ../views/pages/dashboard/dashboard.php'); // Sesuaikan path
             exit();
         } else {
             return "Email atau Password salah!";
@@ -42,17 +42,9 @@ class AuthController {
     }
 
     // Fungsi untuk menangani form login
-    public function handleLoginForm() {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $email = $_POST['email'];
-            $password = $_POST['password'];
-            $message = $this->login($email, $password);
-            
-            if ($message) {
-                header('Location: ../pages/dashboard/dashboard.php'); // Sesuaikan path
-                exit();
-            }
-        }
+    // Fungsi untuk menangani form login
+    public function handleLoginForm($email, $password) {
+        return $this->login($email, $password);
     }
 
     // Fungsi untuk menangani form register
