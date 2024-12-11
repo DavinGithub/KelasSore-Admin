@@ -1,16 +1,25 @@
 <?php
 function isActive($menuItem) {
-    $currentPage = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
-    return (strtolower($menuItem) === $currentPage) ? 'active' : '';
+    // Ambil current page dari URL
+    $currentUrl = $_SERVER['REQUEST_URI'];
+    // Jika di dashboard (root path atau /index.php)
+    if ($currentUrl == '/' || $currentUrl == '/index.php' || strpos($currentUrl, 'dashboard') !== false) {
+        $currentPage = 'dashboard';
+    } else {
+        // Extract page name dari URL (mentor, kelas, dll)
+        preg_match('/pages\/([^\/]+)/', $currentUrl, $matches);
+        $currentPage = isset($matches[1]) ? $matches[1] : 'dashboard';
+    }
+    return (strtolower($menuItem) === strtolower($currentPage)) ? 'active' : '';
 }
 
 $navItems = [
-    ['icon' => 'fa-th-large', 'text' => 'Dashboard'],
-    ['icon' => 'fa-chalkboard-teacher', 'text' => 'Mentor'],
-    ['icon' => 'fa-graduation-cap', 'text' => 'Kelas'],
-    ['icon' => 'fa-book', 'text' => 'Buku'],
-    ['icon' => 'fa-money-bill-wave', 'text' => 'Gaji'],
-    ['icon' => 'fa-credit-card', 'text' => 'Pembayaran']
+    ['icon' => 'fa-th-large', 'text' => 'Dashboard', 'url' => '/views/pages/dashboard/dashboard.php'],
+    ['icon' => 'fa-chalkboard-teacher', 'text' => 'Mentor', 'url' => '/views/pages/mentor/mentor.php'],
+    ['icon' => 'fa-graduation-cap', 'text' => 'Kelas', 'url' => '/views/pages/kelas/kelas.php'],
+    ['icon' => 'fa-book', 'text' => 'Buku', 'url' => '/views/pages/buku/buku.php'],
+    ['icon' => 'fa-money-bill-wave', 'text' => 'Gaji', 'url' => '/views/pages/gaji/gaji.php'],
+    ['icon' => 'fa-credit-card', 'text' => 'Pembayaran', 'url' => '/views/pages/pembayaran/pembayaran.php']
 ];
 ?>
 
@@ -18,7 +27,7 @@ $navItems = [
     <div class="logo">DashStack</div>
     <nav>
         <?php foreach($navItems as $item): ?>
-            <a href="index.php?page=<?php echo strtolower($item['text']); ?>" 
+            <a href="<?php echo $item['url']; ?>" 
                class="nav-item <?php echo isActive($item['text']); ?>">
                 <i class="fas <?php echo $item['icon']; ?>"></i>
                 <?php echo $item['text']; ?>
@@ -37,6 +46,7 @@ $navItems = [
     background-color: #fff;
     padding: 20px;
     box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    z-index: 1000;
 }
 
 .logo {
@@ -56,6 +66,11 @@ $navItems = [
     gap: 10px;
     color: #666;
     text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.nav-item:hover {
+    background-color: #f0f0f0;
 }
 
 .nav-item.active {

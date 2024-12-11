@@ -17,6 +17,7 @@ $allowedPages = [
     'pembayaran' => 'views/pages/pembayaran/pembayaran.php',
 ];
 
+
 if (array_key_exists($page, $allowedPages)) {
     include $allowedPages[$page];
 } else {
