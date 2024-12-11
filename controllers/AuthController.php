@@ -49,6 +49,7 @@ class AuthController {
             $message = $this->login($email, $password);
             
             if ($message) {
+                header('Location: ../pages/dashboard/dashboard.php'); // Sesuaikan path
                 exit();
             }
         }

@@ -1,37 +1,32 @@
 <?php
-// Dummy data
 $metrics = [
-    'total_users' => 40689,
-    'total_orders' => 10293,
-    'total_sales' => 89000,
-    'total_pending' => 2040,
+    'total_users' => 3412,
+    'total_orders' => 4214,
+    'total_sales' => 4213,
+    'total_pending' => 1043,
 ];
 
-$deals = [
+$payments = [
     [
-        'product_name' => 'Apple Watch',
-        'location' => '6096 Marylaine Landing',
-        'date_time' => '12.09.2019 - 12:53 PM',
-        'place' => '423',
-        'amount' => 34295,
-        'status' => 'delivered'
+        'name' => 'John Doe',
+        'course_name' => 'Web Development',
+        'payment_status' => 'accepted'
     ],
     [
-        'product_name' => 'Apple Watch',
-        'location' => '6096 Marylaine Landing',
-        'date_time' => '12.09.2019 - 12:53 PM',
-        'place' => '423',
-        'amount' => 34295,
-        'status' => 'pending'
+        'name' => 'Jane Smith',
+        'course_name' => 'Graphic Design',
+        'payment_status' => 'pending'
     ],
     [
-        'product_name' => 'Apple Watch',
-        'location' => '6096 Marylaine Landing',
-        'date_time' => '12.09.2019 - 12:53 PM',
-        'place' => '423',
-        'amount' => 34295,
-        'status' => 'rejected'
+        'name' => 'Mike Johnson',
+        'course_name' => 'Data Science',
+        'payment_status' => 'accepted'
     ],
+    [
+        'name' => 'Emma White',
+        'course_name' => 'Cyber Security',
+        'payment_status' => 'pending'
+    ]
 ];
 ?>
 
@@ -90,42 +85,32 @@ $deals = [
 
             <div class="deals-table">
                 <div class="deals-header">
-                    <h2>Deals Details</h2>
-                    <select>
-                        <option>October</option>
-                        <option>November</option>
-                        <option>December</option>
-                    </select>
+                    <h2>Payment Status</h2>
                 </div>
 
                 <table>
                     <thead>
                         <tr>
-                            <th>Product Name</th>
-                            <th>Location</th>
-                            <th>Date - Time</th>
-                            <th>Place</th>
-                            <th>Amount</th>
-                            <th>Status</th>
+                            <th>No</th>
+                            <th>Name</th>
+                            <th>Course Name</th>
+                            <th>Payment Status</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach($deals as $deal): ?>
+                        <?php $no = 1; foreach ($payments as $payment): ?>
                         <tr>
+                            <td><?php echo $no++; ?></td>
+                            <td><?php echo htmlspecialchars($payment['name']); ?></td>
+                            <td><?php echo htmlspecialchars($payment['course_name']); ?></td>
                             <td>
-                                <div class="product-info">
-                                    <div class="product-image"></div>
-                                    <span><?php echo htmlspecialchars($deal['product_name']); ?></span>
-                                </div>
-                            </td>
-                            <td><?php echo htmlspecialchars($deal['location']); ?></td>
-                            <td><?php echo htmlspecialchars($deal['date_time']); ?></td>
-                            <td><?php echo htmlspecialchars($deal['place']); ?></td>
-                            <td>$<?php echo number_format($deal['amount'], 2); ?></td>
-                            <td>
-                                <span class="status-badge status-<?php echo $deal['status']; ?>">
-                                    <?php echo ucfirst($deal['status']); ?>
+                                <span class="status-badge status-<?php echo $payment['payment_status']; ?>">
+                                    <?php echo ucfirst($payment['payment_status']); ?>
                                 </span>
+                            </td>
+                            <td>
+                                <a href="#" class="action-icon"><i class="fas fa-edit"></i></a>
                             </td>
                         </tr>
                         <?php endforeach; ?>

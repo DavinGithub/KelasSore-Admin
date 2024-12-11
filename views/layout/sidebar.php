@@ -1,16 +1,7 @@
 <?php
 function isActive($menuItem) {
-    $currentPage = basename($_SERVER['PHP_SELF']);
-    $menuMap = [
-        'index.php' => 'Dashboard',
-        'mentor.php' => 'Mentor',
-        'kelas.php' => 'Kelas',
-        'buku.php' => 'Buku',
-        'gaji.php' => 'Gaji',
-        'pembayaran.php' => 'Pembayaran'
-    ];
-    
-    return ($menuMap[$currentPage] === $menuItem) ? 'active' : '';
+    $currentPage = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
+    return (strtolower($menuItem) === $currentPage) ? 'active' : '';
 }
 
 $navItems = [
@@ -27,10 +18,11 @@ $navItems = [
     <div class="logo">DashStack</div>
     <nav>
         <?php foreach($navItems as $item): ?>
-            <div class="nav-item <?php echo isActive($item['text']); ?>">
+            <a href="index.php?page=<?php echo strtolower($item['text']); ?>" 
+               class="nav-item <?php echo isActive($item['text']); ?>">
                 <i class="fas <?php echo $item['icon']; ?>"></i>
                 <?php echo $item['text']; ?>
-            </div>
+            </a>
         <?php endforeach; ?>
     </nav>
 </div>
@@ -63,11 +55,13 @@ $navItems = [
     align-items: center;
     gap: 10px;
     color: #666;
+    text-decoration: none;
 }
 
 .nav-item.active {
     background-color: #4A6CF7;
     color: white;
+    text-decoration: none;
 }
 
 .nav-item i {

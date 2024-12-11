@@ -111,7 +111,7 @@
             text-transform: capitalize;
         }
 
-        .status-delivered {
+        .status-accepted {
             background-color: #22c55e;
         }
 
@@ -119,19 +119,12 @@
             background-color: #eab308;
         }
 
-        .status-rejected {
-            background-color: #ef4444;
+        .action-icon {
+            color: #4b5563;
+            text-decoration: none;
+            font-size: 16px;
         }
-
-        .product-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .product-image {
-            width: 40px;
-            height: 40px;
-            background-color: #f0f2f5;
-            border-radius: 8px;
+        
+        .action-icon:hover {
+            color: #1f2937;
         }
