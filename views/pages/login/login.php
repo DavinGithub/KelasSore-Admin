@@ -1,26 +1,11 @@
 <?php
-include dirname(__FILE__) . '/../../../controllers/AuthController.php';
 
 // Start session at the beginning
 session_start();
 
 if (isset($_SESSION['admin_id'])) {
-    header('Location: ../pages/dashboard/dashboard.php');
+    header('Location: /views/pages/dashboard/dashboard.php');
     exit();
-}   
-
-// Instantiate AuthController
-$authController = new AuthController();
-
-// Handle login form submission
-$message = '';
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-
-    $remember_me = isset($_POST['remember_me']) ? true : false;
-
-    $message = $authController->login($email, $password);
 }
 ?>
 

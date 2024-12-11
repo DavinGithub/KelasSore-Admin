@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 $metrics = [
     'total_users' => 3412,
     'total_orders' => 4214,
