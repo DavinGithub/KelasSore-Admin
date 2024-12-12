@@ -36,8 +36,8 @@ class KelasModel
     public function insertKelas($data)
     {
         $query = "INSERT INTO kelas 
-        (mentor_id, name_mentor, name, image, description, category, kurikulum, price, quota, quota_left, start_date, end_date, link_wa, status, created_at, updated_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        (mentor_id, name_mentor, name, image, description, category, kurikulum, price, quota, quota_left, start_date, end_date, link_wa, status, what_will_learn_1, what_will_learn_2, what_will_learn_3, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         // Prepare the query
         $stmt = mysqli_prepare($this->conn, $query);
@@ -48,7 +48,7 @@ class KelasModel
         // Bind parameters individually
         mysqli_stmt_bind_param(
             $stmt,
-            "isssssssiiisssss",  // Bind the parameters type
+            "isssssssiiissssssss",  // Updated type definition
             $mentor_id,  // This will be NULL if not provided
             $data['name_mentor'],
             $data['name'],
@@ -63,6 +63,9 @@ class KelasModel
             $data['end_date'],
             $data['link_wa'],
             $data['status'],
+            $data['what_will_learn_1'],
+            $data['what_will_learn_2'],
+            $data['what_will_learn_3'],
             $data['created_at'],
             $data['updated_at']
         );
@@ -81,7 +84,7 @@ class KelasModel
     public function updateKelas($kelasId, $data)
     {
         $query = "UPDATE kelas 
-                  SET mentor_id = ?, name_mentor = ?, name = ?, image = ?, description = ?, category = ?, kurikulum = ?, price = ?, quota = ?, quota_left = ?, start_date = ?, end_date = ?, link_wa = ?, status = ?, updated_at = ?
+                  SET mentor_id = ?, name_mentor = ?, name = ?, image = ?, description = ?, category = ?, kurikulum = ?, price = ?, quota = ?, quota_left = ?, start_date = ?, end_date = ?, link_wa = ?, status = ?,  what_will_learn_1 = ?, what_will_learn_2 = ?, what_will_learn_3 = ?, updated_at = ?
                   WHERE id = ?";
         $stmt = mysqli_prepare($this->conn, $query);
 
@@ -96,7 +99,7 @@ class KelasModel
 
         mysqli_stmt_bind_param(
             $stmt,
-            "isssssssiisssssi",  // Updated type definition
+            "isssssssiissssssssi",  // Updated type definition
             $mentor_id,          // mentor_id
             $data['name_mentor'],
             $data['name'],
@@ -111,6 +114,9 @@ class KelasModel
             $data['end_date'],
             $data['link_wa'],
             $data['status'],
+            $data['what_will_learn_1'],
+            $data['what_will_learn_2'],
+            $data['what_will_learn_3'],
             $updated_at,         // updated_at
             $kelasId             // id for WHERE clause
         );
