@@ -35,40 +35,97 @@ class InvoiceModel
 
     public function insertInvoice($data)
     {
-        // Query untuk memasukkan data ke tabel invoices
-        $query = "INSERT INTO invoices (user_id, kelas_id, status, name, payment_price, nominal, no_rekening, image_pay, bank_name, transfer_date, approval, created_at, updated_at)
-                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    
-        // Siapkan pernyataan SQL untuk eksekusi
-        $stmt = mysqli_prepare($this->conn, $query);
-    
-        
-        mysqli_stmt_bind_param(
-            $stmt,
-            "ssssssssssss", 
-            $data['user_id'],
-            $data['kelas_id'],
-            $data['status'],          
-            $data['name'],            
-            $data['payment_price'],  
-            $data['nominal'],        
-            $data['no_rekening'],    
-            $data['image_pay'],      
-            $data['bank_name'],     
-            $data['transfer_date'],  
-            $data['approval'],       
-            $data['created_at'],    
-            $data['updated_at']      
-        );
-    
-        // Eksekusi pernyataan SQL
-        $executeResult = mysqli_stmt_execute($stmt);
-    
-        // Cek apakah eksekusi berhasil
-        if ($executeResult) {
+        // Cek apakah koneksi berhasil
+        if (!$this->conn) {
+            error_log("Connection failed: " . mysqli_connect_error());
+            return false;
+        }
+
+        // Tentukan waktu default untuk created_at dan updated_at
+        $created_at = date('Y-m-d H:i:s');
+        $updated_at = date('Y-m-d H:i:s');
+
+        // Tentukan nilai default untuk created_at dan updated_at jika tidak ada dalam data
+        $data['created_at'] = $data['created_at'] ?? $created_at;
+        $data['updated_at'] = $data['updated_at'] ?? $updated_at;
+
+        // Mulai transaksi
+        mysqli_begin_transaction($this->conn);
+
+        try {
+            // Query untuk memasukkan data ke tabel invoices
+            $query = "INSERT INTO invoices (user_id, kelas_id, name, payment_price, nominal, no_rekening, image_pay, bank_name, transfer_date, approval, created_at, updated_at)
+                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+            $stmt = mysqli_prepare($this->conn, $query);
+            if (!$stmt) {
+                throw new Exception("Prepare statement failed for invoices: " . mysqli_error($this->conn));
+            }
+
+            // Binding parameter untuk query invoices
+            mysqli_stmt_bind_param(
+                $stmt,
+                "iissdsssssss",
+                $data['user_id'],
+                $data['kelas_id'],
+                $data['name'],
+                $data['payment_price'],
+                $data['nominal'],
+                $data['no_rekening'],
+                $data['image_pay'],
+                $data['bank_name'],
+                $data['transfer_date'],
+                $data['approval'],
+                $data['created_at'],
+                $data['updated_at']
+            );
+
+            // Eksekusi query untuk invoices
+            $executeResult = mysqli_stmt_execute($stmt);
+            if (!$executeResult) {
+                throw new Exception("Execute statement failed for invoices: " . mysqli_stmt_error($stmt));
+            }
+
+            // Query untuk memasukkan data ke tabel kelas_users
+            $kelasQuery = "INSERT INTO kelas_users (user_id, kelas_id, created_at, updated_at) VALUES (?, ?, ?, ?)";
+            $stmt2 = mysqli_prepare($this->conn, $kelasQuery);
+            if (!$stmt2) {
+                throw new Exception("Prepare statement failed for kelas_users: " . mysqli_error($this->conn));
+            }
+
+            // Binding parameter untuk query kelas_users
+            mysqli_stmt_bind_param(
+                $stmt2,
+                "iiss",
+                $data['user_id'],
+                $data['kelas_id'],
+                $data['created_at'],
+                $data['updated_at']
+            );
+
+            // Eksekusi query untuk kelas_users
+            $executeResult2 = mysqli_stmt_execute($stmt2);
+            if (!$executeResult2) {
+                throw new Exception("Execute statement failed for kelas_users: " . mysqli_stmt_error($stmt2));
+            }
+
+            // Jika kedua query berhasil, commit transaksi
+            mysqli_commit($this->conn);
             return true; // Data berhasil dimasukkan
-        } else {
+
+        } catch (Exception $e) {
+            // Jika terjadi kesalahan, rollback transaksi
+            mysqli_rollback($this->conn);
+            error_log("Error: " . $e->getMessage());
             return false; // Gagal memasukkan data
+        } finally {
+            // Menutup statement setelah selesai
+            if (isset($stmt)) {
+                mysqli_stmt_close($stmt);
+            }
+            if (isset($stmt2)) {
+                mysqli_stmt_close($stmt2);
+            }
         }
     }
 
@@ -76,32 +133,33 @@ class InvoiceModel
     {
         // Query untuk memperbarui data di tabel invoices
         $query = "UPDATE invoices SET status = ?, name = ?, payment_price = ?, nominal = ?, no_rekening = ?, image_pay = ?, bank_name = ?, transfer_date = ?, approval = ?, updated_at = ? WHERE id = ?";
-    
+
         // Siapkan pernyataan SQL untuk eksekusi
         $stmt = mysqli_prepare($this->conn, $query);
 
+        // Dapatkan waktu saat ini untuk updated_at
         $updated_at = date('Y-m-d H:i:s');
-    
-        // Bind parameters individually
+
+        // Bind parameter sesuai dengan tipe data yang sesuai
         mysqli_stmt_bind_param(
             $stmt,
-            "ssssssssssssi", 
-            $data['status'],          
-            $data['name'],            
-            $data['payment_price'],  
-            $data['nominal'],        
-            $data['no_rekening'],    
-            $data['image_pay'],      
-            $data['bank_name'],     
-            $data['transfer_date'],  
-            $data['approval'],    
-            $updated_at,   
-            $invoiceId              
+            "sssssssssssi", // format tipe data
+            $data['status'],
+            $data['name'],
+            $data['payment_price'],
+            $data['nominal'],
+            $data['no_rekening'],
+            $data['image_pay'],
+            $data['bank_name'],
+            $data['transfer_date'],
+            $data['approval'],
+            $updated_at,
+            $invoiceId  // Parameter terakhir untuk id invoice yang akan diupdate
         );
-    
+
         // Eksekusi pernyataan SQL
         $executeResult = mysqli_stmt_execute($stmt);
-    
+
         // Cek apakah eksekusi berhasil
         if ($executeResult) {
             return true; // Data berhasil diperbarui
@@ -109,7 +167,6 @@ class InvoiceModel
             return false; // Gagal memperbarui data
         }
     }
-    
 
     public function deleteInvoice($invoiceId)
     {
@@ -119,4 +176,3 @@ class InvoiceModel
         return mysqli_stmt_execute($stmt);
     }
 }
-?>
