@@ -4,11 +4,19 @@
 include dirname(__FILE__) . '/../services/database.php';
 include dirname(__FILE__) . '/../models/MentorModel.php';
 
-class AuthController {
+class MentorController {
     protected $mentorModel;
 
     public function __construct() {
         $this->mentorModel = new MentorModel(); // Inisialisasi model
+    }
+
+    public function getAllMentors() {
+        return $this->mentorModel->getAllMentors();
+    }
+
+    public function getMentorById($mentorId) {
+        return $this->mentorModel->getMentorById($mentorId);
     }
 
     // Fungsi untuk login
