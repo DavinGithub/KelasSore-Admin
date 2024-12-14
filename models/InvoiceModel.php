@@ -132,7 +132,7 @@ class InvoiceModel
     public function updateInvoice($invoiceId, $data)
     {
         // Query untuk memperbarui data di tabel invoices
-        $query = "UPDATE invoices SET status = ?, name = ?, payment_price = ?, nominal = ?, no_rekening = ?, image_pay = ?, bank_name = ?, transfer_date = ?, approval = ?, updated_at = ? WHERE id = ?";
+        $query = "UPDATE invoices SET status = ?, approval = ?, updated_at = ? WHERE id = ?";
 
         // Siapkan pernyataan SQL untuk eksekusi
         $stmt = mysqli_prepare($this->conn, $query);
@@ -143,15 +143,8 @@ class InvoiceModel
         // Bind parameter sesuai dengan tipe data yang sesuai
         mysqli_stmt_bind_param(
             $stmt,
-            "sssssssssssi", // format tipe data
+            "sssi", // format tipe data
             $data['status'],
-            $data['name'],
-            $data['payment_price'],
-            $data['nominal'],
-            $data['no_rekening'],
-            $data['image_pay'],
-            $data['bank_name'],
-            $data['transfer_date'],
             $data['approval'],
             $updated_at,
             $invoiceId  // Parameter terakhir untuk id invoice yang akan diupdate

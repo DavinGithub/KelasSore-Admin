@@ -30,13 +30,13 @@ class InvoicesController
     }
 
     // Read a specific invoice by ID
-    public function getInvoiceById($invoiceId)
-    {
-        $invoice = $this->invoiceModel->getInvoiceById($invoiceId);
-        if ($invoice) {
-            return json_encode(['success' => true, 'data' => $invoice]);
+    public function updateInvoiceStatus($invoiceId, $status) {
+        $data = ['status' => $status];
+        $updateResult = $this->invoiceModel->updateInvoice($invoiceId, $data);
+        if ($updateResult) {
+            return json_encode(['success' => true, 'message' => 'Invoice status updated successfully']);
         } else {
-            return json_encode(['success' => false, 'message' => 'Invoice not found']);
+            return json_encode(['success' => false, 'message' => 'Failed to update invoice status']);
         }
     }
 

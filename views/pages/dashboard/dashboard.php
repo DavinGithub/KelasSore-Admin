@@ -1,8 +1,32 @@
 <?php
+//File: views/pages/dashboard/dashboard.php
 include dirname(__FILE__) . '/../../../controllers/InvoiceController.php';
 
 // Initialize the InvoicesController
 $invoicesController = new InvoicesController();
+
+// Handle POST request for updating invoice status
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'update_invoice_status') {
+    $invoiceId = $_POST['invoice_id'] ?? null;
+    $newStatus = $_POST['status'] ?? null;
+    $approval = $_POST['approval'] ?? null;
+
+    if ($invoiceId && $newStatus && $approval) {
+        $data = [
+            'status' => $newStatus,
+            'approval' => $approval,
+        ];
+        
+        $response = json_decode($invoicesController->updateInvoice($invoiceId, $data), true);
+        
+        header('Content-Type: application/json');
+        echo json_encode($response);
+        exit;
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Invalid input']);
+        exit;
+    }
+}
 
 // Fetch all invoices and decode the JSON response
 $response = json_decode($invoicesController->getAllInvoices(), true);
@@ -22,7 +46,7 @@ if ($response['success'] && isset($response['data'])) {
     foreach ($payments as $payment) {
         $metrics['total_orders']++;
         $metrics['total_sales'] += floatval($payment['payment_price'] ?? 0);
-        if (isset($payment['payment_status']) && $payment['payment_status'] === 'pending') {
+        if (isset($payment['status']) && $payment['status'] === 'menunggu pembayaran') {
             $metrics['total_pending']++;
         }
     }
@@ -53,6 +77,36 @@ if ($response['success'] && isset($response['data'])) {
         .empty-state p {
             color: #4b5563;
             font-size: 1rem;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 8px;
+        }
+        .close-btn {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close-btn:hover {
+            color: #000;
         }
     </style>
 </head>
@@ -89,7 +143,7 @@ if ($response['success'] && isset($response['data'])) {
 
             <div class="deals-table">
                 <div class="deals-header">
-                    <h2>Payment Status</h2>
+                    <h2>Status Pembayaran</h2>
                 </div>
 
                 <?php if (empty($payments)): ?>
@@ -102,9 +156,10 @@ if ($response['success'] && isset($response['data'])) {
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>Name</th>
-                            <th>Course Name</th>
-                            <th>Payment Status</th>
+                            <th>Nama User</th>
+                            <th>Name Kelas</th>
+                            <th>Status Pembayaran</th>
+                            <th>Status Perizinan</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -115,12 +170,16 @@ if ($response['success'] && isset($response['data'])) {
                             <td><?php echo htmlspecialchars($payment['name'] ?? ''); ?></td>
                             <td><?php echo htmlspecialchars($payment['course_name'] ?? ''); ?></td>
                             <td>
-                                <span class="status-badge status-<?php echo strtolower($payment['payment_status'] ?? 'pending'); ?>">
-                                    <?php echo ucfirst($payment['payment_status'] ?? 'Pending'); ?>
+                                <span class="status-badge status-<?php echo strtolower($payment['status'] ?? 'menunggu pembayaran'); ?>">
+                                    <?php echo ucfirst($payment['status'] ?? 'menunggu pembayaran'); ?>
                                 </span>
                             </td>
                             <td>
-                                <a href="#" class="action-icon" onclick="openModal('<?php echo $payment['id']; ?>')">
+                                <a href="#" class="action-icon" onclick="openModal(
+                                    '<?php echo $payment['id']; ?>',
+                                    '<?php echo $payment['status'] ?? ''; ?>',
+                                    '<?php echo $payment['approval'] ?? ''; ?>'
+                                )">
                                     <i class="fas fa-edit"></i>
                                 </a>
                             </td>
@@ -133,14 +192,47 @@ if ($response['success'] && isset($response['data'])) {
         </div>
     </div> 
 
-    <?php include '../../../views/pages/dashboard/modal.php'; ?>
+    <!-- Modal for Updating Invoice Status -->
+    <div id="updateInvoiceStatusModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h2>Update Invoice Status</h2>
+            <form id="updateInvoiceStatusForm">
+                <input type="hidden" name="action" value="update_invoice_status">
+                <input type="hidden" id="invoiceId" name="invoice_id">
+                
+                <div>
+                    <label for="paymentStatus">Payment Status:</label>
+                    <select id="paymentStatus" name="status" required>
+                        <option value="menunggu pembayaran">Menunggu Pembayaran</option>
+                        <option value="terbayar">Terbayar</option>
+                        <option value="gagal">Gagal</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="approvalStatus">Approval Status:</label>
+                    <select id="approvalStatus" name="approval" required>
+                        <option value="disetujui">Disetujui</option>
+                        <option value="ditolak">Ditolak</option>
+                    </select>
+                </div>
+
+                <button type="submit">Update Status</button>
+            </form>
+        </div>
+    </div>
 
     <script>
-        const modal = document.getElementById('updatePaymentStatusModal');
-        const paymentIdInput = document.getElementById('paymentId');
+        const modal = document.getElementById('updateInvoiceStatusModal');
+        const invoiceIdInput = document.getElementById('invoiceId');
+        const paymentStatusSelect = document.getElementById('paymentStatus');
+        const approvalStatusSelect = document.getElementById('approvalStatus');
 
-        function openModal(paymentId) {
-            paymentIdInput.value = paymentId;
+        function openModal(invoiceId, currentPaymentStatus, currentApproval) {
+            invoiceIdInput.value = invoiceId;
+            paymentStatusSelect.value = currentPaymentStatus || 'menunggu pembayaran';
+            approvalStatusSelect.value = currentApproval || '';
             modal.style.display = 'block';
         }
 
@@ -148,31 +240,30 @@ if ($response['success'] && isset($response['data'])) {
             modal.style.display = 'none';
         }
 
-   
         window.onclick = function(event) {
             if (event.target === modal) {
                 closeModal();
             }
         }
 
-        // Submit form dengan AJAX
-        const form = document.getElementById('updatePaymentStatusForm');
+        // Submit form with AJAX
+        const form = document.getElementById('updateInvoiceStatusForm');
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             const formData = new FormData(form);
 
-            fetch('../../../controllers/InvoiceController.php', {
+            fetch('', {  // Empty string means submit to the same page
                 method: 'POST',
                 body: formData
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert('Payment status updated successfully!');
+                    alert('Invoice status updated successfully!');
                     closeModal();
                     location.reload();
                 } else {
-                    alert('Failed to update payment status.');
+                    alert('Failed to update invoice status: ' + data.message);
                 }
             })
             .catch(error => {
