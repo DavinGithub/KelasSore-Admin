@@ -10,6 +10,16 @@ class MentorModel {
         $this->conn = $conn;
     }
 
+    public function getAllMentors() {
+        $query = "SELECT * FROM mentors";
+        $result = mysqli_query($this->conn, $query);
+        $mentorsList = [];
+        while ($row = mysqli_fetch_assoc($result)) {
+            $mentorsList[] = $row;
+        }
+        return $mentorsList;
+    }
+
     // Fungsi untuk mendapatkan mentor berdasarkan email
     public function getMentorByEmail($email) {
         global $conn;
@@ -30,17 +40,17 @@ class MentorModel {
     }
 
 
-    public function createMentor($email, $name, $password) {
+    public function createMentor($email, $name, $password, $phone_number = '') {
         global $conn;
         $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
         $created_at = date("Y-m-d H:i:s");
         $updated_at = $created_at;
         
-        $query = "INSERT INTO mentors (email, name, password, phone_number ,created_at, updated_at) 
+        $query = "INSERT INTO mentors (email, name, password, phone_number, created_at, updated_at) 
                   VALUES (?, ?, ?, ?, ?, ?)";
         $stmt = mysqli_prepare($conn, $query);
-
-        mysqli_stmt_bind_param($stmt, "ssssss", $email, $name, $hashedPassword, $created_at, $updated_at);
+    
+        mysqli_stmt_bind_param($stmt, "ssssss", $email, $name, $hashedPassword, $phone_number, $created_at, $updated_at);
         
         return mysqli_stmt_execute($stmt);
     }
@@ -62,36 +72,22 @@ class MentorModel {
         if (empty($email) || empty($name) || empty($password)) {
             return "Semua field harus diisi!";
         }
-
+    
         // Validasi format email
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return "Format email tidak valid!";
         }
-
-
+    
         // Validasi panjang password
         if (strlen($password) < 6) {
             return "Password minimal 6 karakter!";
         }
-
+    
         if ($password === $password_confirm) {
             // Cek apakah email sudah terdaftar
             $result = $this->getMentorByEmail($email);
             if (mysqli_num_rows($result) > 0) {
                 return "Email sudah terdaftar!";
-            } else {
-                // Buat pengguna baru
-                if ($this->createMentor($email, $name, $password)) {
-                    return "Pendaftaran berhasil, silakan login!";
-                } else {
-                    return "Terjadi kesalahan saat pendaftaran!";
-                }
-            }
-        } if ($phone_number === $phone_number) {
-            // Cek apakah nomor telepon sudah terdaftar
-            $result = $this->getMentorByPhoneNumber($phone_number);
-            if (mysqli_num_rows($result) > 0) {
-                return "Nomor telepon sudah terdaftar!";
             } else {
                 // Buat pengguna baru
                 if ($this->createMentor($email, $name, $password, $phone_number)) {

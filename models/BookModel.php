@@ -12,26 +12,21 @@ class BookModel {
     }
 
     public function getAllBooks() {
-        // Pastikan query untuk mengambil buku sudah benar
         $query = "SELECT * FROM books";
         $result = mysqli_query($this->conn, $query);
-    
-        // Debugging: Cek apakah query berhasil
+
         if (!$result) {
-            echo "Query error: " . mysqli_error($this->conn);
+            error_log("Query error: " . mysqli_error($this->conn));
             return [];
         }
-    
+
         $books = [];
         while ($row = mysqli_fetch_assoc($result)) {
             $books[] = $row;
         }
-    
-        // Debugging: Cek hasil query
-        var_dump($books);  // Menampilkan data buku
-    
+
         return $books;
-    }    
+    }
 
     public function getBookById($bookId) {
         $query = "SELECT * FROM books WHERE id = ?";
@@ -51,31 +46,20 @@ class BookModel {
     }
 
     public function updateBook($bookId, $title, $description, $ebookFilePath, $imagePath, $rating, $updatedAt) {
-        // First, get the existing book data to check if we should keep the old file paths
-        $existingBook = $this->getBookById($bookId);
-    
-        // If no new ebook file is uploaded, retain the existing one
-        if (empty($ebookFilePath)) {
-            $ebookFilePath = $existingBook['ebook_file'];
-        }
-    
-        // If no new image is uploaded, retain the existing one
-        if (empty($imagePath)) {
-            $imagePath = $existingBook['image'];
-        }
-    
-        // Update query
         $query = "UPDATE books 
                   SET title = ?, description = ?, ebook_file = ?, image = ?, rating = ?, updated_at = ? 
                   WHERE id = ?";
         $stmt = mysqli_prepare($this->conn, $query);
-        
-        // Bind the parameters
         mysqli_stmt_bind_param($stmt, "ssssssi", $title, $description, $ebookFilePath, $imagePath, $rating, $updatedAt, $bookId);
-        
-        // Execute the query and return the result
-        return mysqli_stmt_execute($stmt);
+    
+        if (!mysqli_stmt_execute($stmt)) {
+            error_log("Error executing update query: " . mysqli_error($this->conn));
+            return false;
+        }
+    
+        return true;
     }
+    
 
     public function deleteBook($bookId) {
         $query = "DELETE FROM books WHERE id = ?";
@@ -83,6 +67,5 @@ class BookModel {
         mysqli_stmt_bind_param($stmt, "i", $bookId);
         return mysqli_stmt_execute($stmt);
     }
-    
 }
 ?>
