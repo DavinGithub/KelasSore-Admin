@@ -1,18 +1,9 @@
 <?php
-// File: views/pages/mentor/mentor.php
-
-
-// Include necessary files
 include_once dirname(__FILE__) . '/../../../controllers/MentorController.php';
 include_once dirname(__FILE__) . '/../../../models/MentorModel.php';
 include_once dirname(__FILE__) . '/../../../services/database.php';
 
-
-// Initialize controller
 $mentorController = new MentorController();
-
-// Handle actions
-$action = isset($_GET['action']) ? $_GET['action'] : '';
 $message = '';
 
 // Create Mentor
@@ -41,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_mentor'])) {
 // Fetch mentors
 $mentors = $mentorController->getAllMentors();
 
-// Fetch specific mentor for edit (if applicable)
+// Fetch specific mentor for edit
 $editMentor = null;
 if (isset($_GET['edit']) && is_numeric($_GET['edit'])) {
     $editMentor = $mentorController->getMentorById($_GET['edit']);
@@ -55,7 +46,7 @@ if (isset($_GET['edit']) && is_numeric($_GET['edit'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mentor Management</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../../../assets/css/mentor/mentor.css">
+    <link rel="stylesheet" href="../../../assets/css/mentor/mainmentor.css">
     <link rel="stylesheet" href="../../../assets/css/mentor/mentormodal.css">
 </head>
 <body>
@@ -105,7 +96,7 @@ if (isset($_GET['edit']) && is_numeric($_GET['edit'])) {
                             <td><?php echo htmlspecialchars($mentor['phone_number']); ?></td>
                             <td>
                                 <div class="action-buttons">
-                                    <a href="?action=detail&id=<?php echo $mentor['id']; ?>" class="btn btn-info">
+                                    <a href="mentor-detail.php?id=<?php echo $mentor['id']; ?>" class="btn btn-info">
                                         <i class="fas fa-eye"></i> Detail
                                     </a>
                                     <a href="?edit=<?php echo $mentor['id']; ?>" class="btn btn-edit">
@@ -190,32 +181,26 @@ if (isset($_GET['edit']) && is_numeric($_GET['edit'])) {
     </div>
 
     <script>
-        // Modal handling
         const modal = document.getElementById('addMentorModal');
         const addMentorButton = document.querySelector('.add-mentor-btn');
 
         <?php if ($editMentor): ?>
-            // If in edit mode, automatically open the modal
             window.onload = function() {
                 modal.style.display = 'block';
             };
         <?php endif; ?>
 
-        // Open modal for adding mentor
         addMentorButton.addEventListener('click', function() {
             modal.style.display = 'block';
         });
 
-        // Close modal function
         function closeModal() {
             modal.style.display = 'none';
-            // Reset URL to remove edit parameter
             if (window.history.replaceState) {
                 window.history.replaceState(null, null, window.location.pathname);
             }
         }
 
-        // Close modal when clicking outside
         window.onclick = function(event) {
             if (event.target === modal) {
                 closeModal();

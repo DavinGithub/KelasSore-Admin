@@ -1,11 +1,8 @@
 <?php
-//File: views/pages/dashboard/dashboard.php
 include dirname(__FILE__) . '/../../../controllers/InvoiceController.php';
 
-// Initialize the InvoicesController
 $invoicesController = new InvoicesController();
 
-// Handle POST request for updating invoice status
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'update_invoice_status') {
     $invoiceId = $_POST['invoice_id'] ?? null;
     $newStatus = $_POST['status'] ?? null;
@@ -28,7 +25,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     }
 }
 
-// Fetch all invoices and decode the JSON response
 $response = json_decode($invoicesController->getAllInvoices(), true);
 $payments = [];
 $metrics = [
@@ -38,11 +34,9 @@ $metrics = [
     'total_pending' => 0
 ];
 
-// Check if the fetch was successful
 if ($response['success'] && isset($response['data'])) {
     $payments = $response['data'];
-    
-    // Calculate metrics from the payments data
+   
     foreach ($payments as $payment) {
         $metrics['total_orders']++;
         $metrics['total_sales'] += floatval($payment['payment_price'] ?? 0);
@@ -156,10 +150,9 @@ if ($response['success'] && isset($response['data'])) {
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>Nama User</th>
+                            <th>Nominal</th>
                             <th>Name Kelas</th>
                             <th>Status Pembayaran</th>
-                            <th>Status Perizinan</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -168,12 +161,8 @@ if ($response['success'] && isset($response['data'])) {
                         <tr>
                             <td><?php echo $no++; ?></td>
                             <td><?php echo htmlspecialchars($payment['name'] ?? ''); ?></td>
-                            <td><?php echo htmlspecialchars($payment['course_name'] ?? ''); ?></td>
-                            <td>
-                                <span class="status-badge status-<?php echo strtolower($payment['status'] ?? 'menunggu pembayaran'); ?>">
-                                    <?php echo ucfirst($payment['status'] ?? 'menunggu pembayaran'); ?>
-                                </span>
-                            </td>
+                            <td><?php echo htmlspecialchars($payment['nominal'] ?? ''); ?></td>
+                            <td><?php echo htmlspecialchars($payment['status'] ?? ''); ?></td>
                             <td>
                                 <a href="#" class="action-icon" onclick="openModal(
                                     '<?php echo $payment['id']; ?>',
@@ -192,7 +181,6 @@ if ($response['success'] && isset($response['data'])) {
         </div>
     </div> 
 
-    <!-- Modal for Updating Invoice Status -->
     <div id="updateInvoiceStatusModal" class="modal">
         <div class="modal-content">
             <span class="close-btn" onclick="closeModal()">&times;</span>
@@ -235,7 +223,7 @@ if ($response['success'] && isset($response['data'])) {
             approvalStatusSelect.value = currentApproval || '';
             modal.style.display = 'block';
         }
-
+        
         function closeModal() {
             modal.style.display = 'none';
         }
