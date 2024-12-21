@@ -13,8 +13,6 @@ $allowedPages = [
     'buku' => 'views/pages/buku/buku.php',
     'mentor' => 'views/pages/mentor/mentor.php',
     'kelas' => 'views/pages/kelas/kelas.php',
-    'gaji' => 'views/pages/gaji/gaji.php',
-    'pembayaran' => 'views/pages/pembayaran/pembayaran.php',
 ];
 
 

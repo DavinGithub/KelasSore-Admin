@@ -1,14 +1,12 @@
-<?php 
-// File: controllers/AuthController.php
-
-include dirname(__FILE__) . '/../services/database.php';
-include dirname(__FILE__) . '/../models/MentorModel.php';
+<?php
+include_once dirname(__FILE__) . '/../services/database.php';
+include_once dirname(__FILE__) . '/../models/MentorModel.php';
 
 class MentorController {
     protected $mentorModel;
 
     public function __construct() {
-        $this->mentorModel = new MentorModel(); // Inisialisasi model
+        $this->mentorModel = new MentorModel();
     }
 
     public function getAllMentors() {
@@ -19,113 +17,32 @@ class MentorController {
         return $this->mentorModel->getMentorById($mentorId);
     }
 
-    // Fungsi untuk login
     public function login($email, $password) {
         $mentor = $this->mentorModel->loginMentor($email, $password);
         if ($mentor) {
-            session_start(); // Pastikan memulai session sebelum set session
-            // Setelah login berhasil, simpan data pengguna ke session
-            $_SESSION['mentor_id'] = $mentor['id']; // ID pengguna
-            $_SESSION['mentor_email'] = $mentor['email']; // Email pengguna
-            $_SESSION['mentor_name'] = $mentor['name']; // Nama pengguna
-            header('Location: ../views/pages/dashboard/dashboard.php'); // Sesuaikan path
+            session_start();
+            $_SESSION['mentor_id'] = $mentor['id'];
+            $_SESSION['mentor_email'] = $mentor['email'];
+            $_SESSION['mentor_name'] = $mentor['name'];
+            header('Location: ../views/pages/dashboard/dashboard.php');
             exit();
         } else {
             return "Email atau Password salah!";
         }
     }
 
-    // Fungsi untuk registrasi
     public function register($email, $name, $password, $password_confirm, $phone_number) {
-        $message = $this->mentorModel->registerMentor($email, $name, $password, $password_confirm, $phone_number);
-        return $message;
+        return $this->mentorModel->registerMentor($email, $name, $password, $password_confirm, $phone_number);
     }
 
-    // Fungsi untuk logout
     public function logout() {
         session_start();
-        session_destroy(); // Menghancurkan session untuk logout
-        header('Location: ../auth/login/login.php'); // Sesuaikan path
+        session_destroy();
+        header('Location: ../auth/login/login.php');
         exit();
     }
 
-    // Fungsi untuk menangani form login
-    // Fungsi untuk menangani form login
-    public function handleLoginForm($email, $password) {
-        return $this->login($email, $password);
-    }
-
-    // Fungsi untuk menangani form register
-    public function handleRegisterForm() {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $email = $_POST['email'];
-            $name = $_POST['name'];
-            $phone_number = $_POST['phone_number'];
-            $password = $_POST['password'];
-            $password_confirm = $_POST['password_confirm'];
-            $message = $this->register($email, $name, $password, $password_confirm, $phone_number);
-            
-            if ($message) {
-                exit();
-            }
-        }
-    }
-
-    public function getMentorProfile($mentorId) {
-        return $this->mentorModel->getMentorById($mentorId);
-    }
-
-    public function updateProfilePicture($mentorId, $profilePicture) {
-        // Tentukan direktori upload
-        $uploadDir = '../public/profile-picture/';
-        $created_at = date('Y-m-d H:i:s');
-        $updated_at = $created_at;
-
-        // Buat direktori jika belum ada
-        if (!file_exists($uploadDir)) {
-            mkdir($uploadDir, 0777, true); // Izin penuh
-        }
-
-        // Pastikan file diupload
-        if (!isset($profilePicture) || $profilePicture['error'] !== UPLOAD_ERR_OK) {
-            return "Error: Upload gagal";
-        }
-
-        // Generate nama file unik
-        $fileExtension = strtolower(pathinfo($profilePicture['name'], PATHINFO_EXTENSION));
-        $newFileName = uniqid() . '.' . $fileExtension;
-        $uploadPath = $uploadDir . $newFileName;
-
-        // Validasi tipe file
-        $allowedTypes = ['jpeg', 'jpg', 'png', 'gif'];
-        if (!in_array($fileExtension, $allowedTypes)) {
-            return "Error: Tipe file tidak diizinkan. Gunakan JPEG, PNG, atau GIF";
-        }
-
-        // Validasi ukuran file (maksimal 5MB)
-        $maxFileSize = 5 * 1024 * 1024; // 5MB
-        if ($profilePicture['size'] > $maxFileSize) {
-            return "Error: Ukuran file terlalu besar. Maksimal 5MB";
-        }
-
-        // Memindahkan file
-        if (move_uploaded_file($profilePicture['tmp_name'], $uploadPath)) {
-            $relativePath = '../public/profile-picture/' . $newFileName;
-
-            // Update path gambar di database
-            if ($this->mentorModel->updateProfilePicture($mentorId, $relativePath, $updated_at)) {
-                return true;
-            } else {
-                // Hapus file jika gagal update database
-                unlink($uploadPath);
-                return "Error: Gagal menyimpan di database";
-            }
-        } else {
-            return "Error: Gagal memindahkan file";
-        }
-    }
-
-    public function update($email, $name, $phone_number, $salary_recived, $salary_remaining, $mentorId) {
+    public function update($mentorId, $email, $name, $phone_number, $salary_recived, $salary_remaining) {
         $data = [
             'email' => $email,
             'name' => $name,
@@ -135,7 +52,50 @@ class MentorController {
             'updated_at' => date('Y-m-d H:i:s')
         ];
 
-        return $this->mentorModel->updateMentor($mentorId, $data);
+        if ($this->mentorModel->updateMentor($mentorId, $data)) {
+            return "Mentor berhasil diupdate!";
+        } else {
+            return "Error: Gagal mengupdate mentor";
+        }
+    }
+
+    public function updateProfilePicture($mentorId, $profilePicture) {
+        $uploadDir = '../public/profile-picture/';
+        $created_at = date('Y-m-d H:i:s');
+        $updated_at = $created_at;
+
+        if (!file_exists($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
+
+        if (!isset($profilePicture) || $profilePicture['error'] !== UPLOAD_ERR_OK) {
+            return "Error: Upload gagal";
+        }
+
+        $fileExtension = strtolower(pathinfo($profilePicture['name'], PATHINFO_EXTENSION));
+        $newFileName = uniqid() . '.' . $fileExtension;
+        $uploadPath = $uploadDir . $newFileName;
+
+        $allowedTypes = ['jpeg', 'jpg', 'png', 'gif'];
+        if (!in_array($fileExtension, $allowedTypes)) {
+            return "Error: Tipe file tidak diizinkan. Gunakan JPEG, PNG, atau GIF";
+        }
+
+        $maxFileSize = 5 * 1024 * 1024;
+        if ($profilePicture['size'] > $maxFileSize) {
+            return "Error: Ukuran file terlalu besar. Maksimal 5MB";
+        }
+
+        if (move_uploaded_file($profilePicture['tmp_name'], $uploadPath)) {
+            $relativePath = '../public/profile-picture/' . $newFileName;
+
+            if ($this->mentorModel->updateProfilePicture($mentorId, $relativePath, $updated_at)) {
+                return true;
+            } else {
+                unlink($uploadPath);
+                return "Error: Gagal menyimpan di database";
+            }
+        }
+        return "Error: Gagal memindahkan file";
     }
 }
-?>

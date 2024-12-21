@@ -18,8 +18,6 @@ $navItems = [
     ['icon' => 'fa-chalkboard-teacher', 'text' => 'Mentor', 'url' => '/views/pages/mentor/mentor.php'],
     ['icon' => 'fa-graduation-cap', 'text' => 'Kelas', 'url' => '/views/pages/kelas/kelas.php'],
     ['icon' => 'fa-book', 'text' => 'Buku', 'url' => '/views/pages/buku/buku.php'],
-    ['icon' => 'fa-money-bill-wave', 'text' => 'Gaji', 'url' => '/views/pages/gaji/gaji.php'],
-    ['icon' => 'fa-credit-card', 'text' => 'Pembayaran', 'url' => '/views/pages/pembayaran/pembayaran.php']
 ];
 ?>
 

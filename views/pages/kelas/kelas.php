@@ -47,7 +47,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'create') {
     }
 }
 
-// Proses form submission untuk update
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'update') {
     $id = $_POST['id'];
     $data = [
@@ -103,7 +102,7 @@ $deals = $kelasController->getAllKelas();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6. 0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../../../assets/css/mentor/mentor.css">
     <style>
         /* Modal styles */
@@ -208,158 +207,9 @@ $deals = $kelasController->getAllKelas();
                 </table>
             </div>
 
-            <!-- Modal for Adding Kelas -->
-            <div id="addKelasModal" class="modal">
-                <div class="modal-content">
-                    <span class="close">&times;</span>
-                    <h1>Tambah Kelas</h1>
-                    <form action="?action=create" method="post" enctype="multipart/form-data">
-                        <!-- Form fields from kelaslama.php -->
-                        <label for="name">Nama Kelas:</label>
-                        <input type="text" name="name" required>
-
-                        <label for="description">Deskripsi Kelas:</label>
-                        <textarea name="description" rows="4" required></textarea>
-
-                        <label for="mentor_id">ID Mentor:</label>
-                        <input type="text" name="mentor_id">
-
-                        <label for="name_mentor">Nama Mentor:</label>
-                        <input type="text" name="name_mentor">
-
-                        <label for="category">Kategori:</label>
-                        <select name="category" required>
-                            <option value="Private">Private </option>
-                            <option value="Reguler">Reguler</option>
-                        </select>
-
-                        <label for="kurikulum">Kurikulum:</label>
-                        <input type="text" name="kurikulum" required>
-
-                        <label for="price">Harga:</label>
-                        <input type="number" name="price" required>
-
-                        <label for="quota">Kuota:</label>
-                        <input type="number" name="quota" required>
-
-                        <label for="quota_left">Kuota Tersisa:</label>
-                        <input type="number" name="quota_left" required>
-
-                        <label for="start_date">Tanggal Mulai:</label>
-                        <input type="date" name="start_date" required>
-
-                        <label for="end_date">Tanggal Selesai:</label>
-                        <input type="date" name="end_date" required>
-
-                        <label for="link_wa">Link WhatsApp:</label>
-                        <input type="url" name="link_wa">
-
-                        <label for="status">Status:</label>
-                        <select name="status" required>
-                            <option value="buka">Buka</option>
-                            <option value="tutup">Tutup</option>
-                        </select>
-
-                        <label for="what_will_learn_1">Apa yang akan dipelajari 1:</label>
-                        <input type="text" name="what_will_learn_1" required>
-
-                        <label for="what_will_learn_2">Apa yang akan dipelajari 2:</label>
-                        <input type="text" name="what_will_learn_2" required>
-
-                        <label for="what_will_learn_3">Apa yang akan dipelajari 3:</label>
-                        <input type="text" name="what_will_learn_3" required>
-
-                        <label for="image">Gambar Kelas (Optional):</label>
-                        <input type="file" name="image">
-
-                        <label for="book_ids[]">Buku yang Dibaca:</label>
-                        <select name="book_ids[]" multiple>
-                            <?php foreach ($allBooks as $book): ?>
-                                <option value="<?= $book['id']; ?>"><?= $book['title']; ?></option>
-                            <?php endforeach; ?>
-                        </select>
-
-                        <button type="submit">Tambah Kelas</button>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Modal for Editing Kelas -->
-            <div id="updateKelasModal" class="modal">
-                <div class="modal-content">
-                    <span class="close" onclick="closeEditModal()">&times;</span>
-                    <h1>Edit Kelas</h1>
-                    <form id="updateKelasForm" action="?action=update" method="post" enctype="multipart/form-data">
-                        <input type="hidden" name="id" id="updateKelasId">
-                        <label for="updateName">Nama Kelas:</label>
-                        <input type="text" name="name" id="updateName" required>
-
-                        <label for="updateDescription">Deskripsi Kelas:</label>
-                        <textarea name="description" id="updateDescription" rows="4" required></textarea>
-
-                        <label for="updateMentorId">ID Mentor:</label>
-                        <input type="text" name="mentor_id" id="updateMentorId">
-
-                        <label for="updateNameMentor">Nama Mentor:</label>
-                        <input type="text" name="name_mentor" id="updateNameMentor">
-
-                        <label for="updateCategory">Kategori:</label>
-                        <select name="category" id="updateCategory" required>
-                            <option value="Private">Private</option>
-                            <option value="Reguler">Reguler</option>
-                        </select>
-
-                        <label for="updateKurikulum">Kurikulum:</label>
-                        <input type="text" name="kurikulum" id="updateKurikulum" required>
-
-                        <label for="updatePrice">Harga:</label>
-                        <input type="number" name="price" id="updatePrice" required>
-
-                        <label for="updateQuota">Kuota:</label>
-                        <input type="number" name="quota" id="updateQuota" required>
-
-                        <label for="updateQuotaLeft">Kuota Tersisa:</label>
-                        <input type="number" name="quota_left" id="updateQuotaLeft" required>
-
-                        <label for="updateStartDate">Tanggal Mulai:</label>
-                        <input type="date" name="start_date" id="updateStartDate" required>
-
-                        <label for="updateEndDate">Tanggal Selesai:</label>
-                        <input type ```php
-="date" name="end_date" id="updateEndDate" required>
-
-                        <label for="updateLinkWa">Link WhatsApp:</label>
-                        <input type="url" name="link_wa" id="updateLinkWa">
-
-                        <label for="updateStatus">Status:</label>
-                        <select name="status" id="updateStatus" required>
-                            <option value="buka">Buka</option>
-                            <option value="tutup">Tutup</option>
-                        </select>
-
-                        <label for="updateWhatWillLearn1">Apa yang akan dipelajari 1:</label>
-                        <input type="text" name="what_will_learn_1" id="updateWhatWillLearn1" required>
-
-                        <label for="updateWhatWillLearn2">Apa yang akan dipelajari 2:</label>
-                        <input type="text" name="what_will_learn_2" id="updateWhatWillLearn2" required>
-
-                        <label for="updateWhatWillLearn3">Apa yang akan dipelajari 3:</label>
-                        <input type="text" name="what_will_learn_3" id="updateWhatWillLearn3" required>
-
-                        <label for="updateImage">Gambar Kelas (Optional):</label>
-                        <input type="file" name="image">
-
-                        <label for="updateBookIds[]">Buku yang Dibaca:</label>
-                        <select name="book_ids[]" id="updateBookIds" multiple>
-                            <?php foreach ($allBooks as $book): ?>
-                                <option value="<?= $book['id']; ?>"><?= $book['title']; ?></option>
-                            <?php endforeach; ?>
-                        </select>
-
-                        <button type="submit">Update Kelas</button>
-                    </form>
-                </div>
-            </div>
+            <!-- Include the modal components -->
+            <?php include 'tambahkelas.php'; ?>
+            <?php include 'updatekelas.php'; ?>
         </div>
     </div>
 

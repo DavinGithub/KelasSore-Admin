@@ -15,12 +15,11 @@ class AuthController {
     public function login($email, $password) {
         $admin = $this->authModel->loginUser($email, $password);
         if ($admin) {
-            session_start(); // Pastikan memulai session sebelum set session
-            // Setelah login berhasil, simpan data pengguna ke session
-            $_SESSION['admin_id'] = $admin['id']; // ID pengguna
-            $_SESSION['admin_email'] = $admin['email']; // Email pengguna
-            $_SESSION['admin_name'] = $admin['name']; // Nama pengguna
-            header('Location: ../views/pages/dashboard/dashboard.php'); // Sesuaikan path
+            session_start(); 
+            $_SESSION['admin_id'] = $admin['id']; 
+            $_SESSION['admin_email'] = $admin['email']; 
+            $_SESSION['admin_name'] = $admin['name']; 
+            header('Location: ../views/pages/dashboard/dashboard.php'); 
             exit();
         } else {
             return "Email atau Password salah!";
