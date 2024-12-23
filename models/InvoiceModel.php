@@ -86,7 +86,30 @@ class InvoiceModel
                 throw new Exception("Execute statement failed for invoices: " . mysqli_stmt_error($stmt));
             }
 
-            // Jika query berhasil, commit transaksi
+            // Query untuk memasukkan data ke tabel kelas_users
+            $kelasQuery = "INSERT INTO kelas_users (user_id, kelas_id, created_at, updated_at) VALUES (?, ?, ?, ?)";
+            $stmt2 = mysqli_prepare($this->conn, $kelasQuery);
+            if (!$stmt2) {
+                throw new Exception("Prepare statement failed for kelas_users: " . mysqli_error($this->conn));
+            }
+
+            // Binding parameter untuk query kelas_users
+            mysqli_stmt_bind_param(
+                $stmt2,
+                "iiss",
+                $data['user_id'],
+                $data['kelas_id'],
+                $data['created_at'],
+                $data['updated_at']
+            );
+
+            // Eksekusi query untuk kelas_users
+            $executeResult2 = mysqli_stmt_execute($stmt2);
+            if (!$executeResult2) {
+                throw new Exception("Execute statement failed for kelas_users: " . mysqli_stmt_error($stmt2));
+            }
+
+            // Jika kedua query berhasil, commit transaksi
             mysqli_commit($this->conn);
             return true; // Data berhasil dimasukkan
 
@@ -99,6 +122,9 @@ class InvoiceModel
             // Menutup statement setelah selesai
             if (isset($stmt)) {
                 mysqli_stmt_close($stmt);
+            }
+            if (isset($stmt2)) {
+                mysqli_stmt_close($stmt2);
             }
         }
     }
@@ -121,65 +147,19 @@ class InvoiceModel
             $data['status'],
             $data['approval'],
             $updated_at,
-            $invoiceId // Parameter terakhir untuk id invoice yang akan diupdate
+            $invoiceId  // Parameter terakhir untuk id invoice yang akan diupdate
         );
 
-        // Mulai transaksi
-        mysqli_begin_transaction($this->conn);
+        // Eksekusi pernyataan SQL
+        $executeResult = mysqli_stmt_execute($stmt);
 
-        try {
-            // Eksekusi pernyataan SQL untuk memperbarui invoices
-            $executeResult = mysqli_stmt_execute($stmt);
-
-            if (!$executeResult) {
-                throw new Exception("Execute statement failed for invoices: " . mysqli_stmt_error($stmt));
-            }
-
-            // Jika status adalah 'terbayar', masukkan data ke tabel kelas_users
-            if ($data['status'] === 'terbayar') {
-                $kelasQuery = "INSERT INTO kelas_users (user_id, kelas_id, created_at, updated_at) VALUES (?, ?, ?, ?)";
-                $stmt2 = mysqli_prepare($this->conn, $kelasQuery);
-
-                if (!$stmt2) {
-                    throw new Exception("Prepare statement failed for kelas_users: " . mysqli_error($this->conn));
-                }
-
-                // Bind parameter untuk query kelas_users
-                mysqli_stmt_bind_param(
-                    $stmt2,
-                    "iiss",
-                    $data['user_id'],
-                    $data['kelas_id'],
-                    $updated_at,
-                    $updated_at
-                );
-
-                // Eksekusi query untuk kelas_users
-                $executeResult2 = mysqli_stmt_execute($stmt2);
-                if (!$executeResult2) {
-                    throw new Exception("Execute statement failed for kelas_users: " . mysqli_stmt_error($stmt2));
-                }
-
-                // Tutup statement kelas_users
-                mysqli_stmt_close($stmt2);
-            }
-
-            // Commit transaksi jika semua query berhasil
-            mysqli_commit($this->conn);
-            return true;
-        } catch (Exception $e) {
-            // Rollback jika terjadi kesalahan
-            mysqli_rollback($this->conn);
-            error_log("Error: " . $e->getMessage());
-            return false;
-        } finally {
-            // Menutup statement
-            if (isset($stmt)) {
-                mysqli_stmt_close($stmt);
-            }
+        // Cek apakah eksekusi berhasil
+        if ($executeResult) {
+            return true; // Data berhasil diperbarui
+        } else {
+            return false; // Gagal memperbarui data
         }
     }
-
 
     public function deleteInvoice($invoiceId)
     {
