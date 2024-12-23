@@ -48,7 +48,7 @@ $books = $bookController->getAllBooks();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Buku</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../../../assets/css/mentor/mentor.css">
+    <link rel="stylesheet" href="../../../assets/css/buku/buku.css">
     <style>
         /* Modal Styles */
         .modal {
@@ -63,23 +63,24 @@ $books = $bookController->getAllBooks();
         }
 
         .modal-content {
-            background-color: #fefefe;
+            background-color: #fff;
             margin: 5% auto;
-            padding: 20px;
+            padding: 30px;
             border: 1px solid #888;
             width: 80%;
-            max-width: 500px;
+            max-width: 600px;
             border-radius: 8px;
             position: relative;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         .close-modal {
             position: absolute;
             right: 10px;
-            top: 5px;
+            top: 10px;
             font-size: 24px;
             cursor: pointer;
-            color: #666;
+            color: #888;
         }
 
         .close-modal:hover {
@@ -94,16 +95,18 @@ $books = $bookController->getAllBooks();
 
         .modal form input,
         .modal form textarea {
-            padding: 8px;
+            padding: 12px;
             border: 1px solid #ddd;
-            border-radius: 4px;
+            border-radius: 8px;
+            font-size: 14px;
         }
 
         .modal form button {
-            padding: 10px;
+            padding: 12px;
             border: none;
-            border-radius: 4px;
+            border-radius: 8px;
             cursor: pointer;
+            font-size: 16px;
         }
 
         .modal form button[type="submit"] {
@@ -118,7 +121,17 @@ $books = $bookController->getAllBooks();
 
         .button-group {
             display: flex;
-            gap: 10px;
+            justify-content: space-between;
+        }
+
+        .modal-preview {
+            display: flex;
+            gap: 15px;
+        }
+
+        .modal-preview img {
+            max-width: 100px;
+            border-radius: 8px;
         }
     </style>
 </head>
@@ -162,19 +175,28 @@ $books = $bookController->getAllBooks();
                             <td><?php echo htmlspecialchars($book['rating'] ?? 0); ?></td>
                             <td><?php echo htmlspecialchars($book['description'] ?? 'No Description'); ?></td>
                             <td>
-                                <a href="<?php echo htmlspecialchars($book['ebook_file']); ?>" target="_blank">Download Ebook</a>
+                                <a href="<?php echo htmlspecialchars($book['ebook_file']); ?>" target="_blank" class="btn-download">
+                                    <i class="fa fa-download" aria-hidden="true"></i> Download Ebook
+                                </a>
                             </td>
                             <td>
+                                <!-- Tombol Update -->
                                 <button onclick="showUpdateForm(
                                     '<?php echo $book['id']; ?>', 
                                     '<?php echo htmlspecialchars($book['title']); ?>', 
                                     '<?php echo htmlspecialchars($book['description']); ?>', 
                                     '<?php echo htmlspecialchars($book['ebook_file']); ?>', 
                                     '<?php echo htmlspecialchars($book['image']); ?>'
-                                )">Update</button>
+                                )" class="btn-update">
+                                    <i class="fa fa-edit"></i> Update
+                                </button>
+
+                                <!-- Tombol Delete -->
                                 <form method="POST" action="" style="display:inline;">
                                     <input type="hidden" name="book_id" value="<?php echo $book['id']; ?>">
-                                    <button type="submit" name="action" value="delete">Delete</button>
+                                    <button type="submit" name="action" value="delete" class="btn-delete">
+                                        <i class="fa fa-trash"></i> Delete
+                                    </button>
                                 </form>
                             </td>
                         </tr>
@@ -220,24 +242,42 @@ $books = $bookController->getAllBooks();
             </div>
 
             <!-- Update Book Form -->
-            <div id="updateBookForm" style="display:none;">
-                <h2>Update Book</h2>
-                <form method="POST" action="" enctype="multipart/form-data">
-                    <input type="hidden" name="action" value="update">
-                    <input type="hidden" name="book_id" id="update_book_id">
-                    <label>Title</label>
-                    <input type="text" name="title" id="update_title" required>
-                    <label>Description</label>
-                    <textarea name="description" id="update_description" required></textarea>
-                    <label>Ebook File</label>
-                    <input type="file" name="ebook_file">
-                    <small>Current file: <span id="current_ebook_file">No File</span></small>
-                    <label>Image</label>
-                    <input type="file" name="image">
-                    <small>Current image: <span id="current_image">No Image</span></small>
-                    <button type="submit">Update Book</button>
-                    <button type="button" onclick="document.getElementById('updateBookForm').style.display='none'">Cancel</button>
-                </form>
+            <div id="updateBookForm" class="modal">
+                <div class="modal-content">
+                    <span class="close-modal" onclick="closeUpdateModal()">&times;</span>
+                    <h2>Update Book</h2>
+                    <form method="POST" action="" enctype="multipart/form-data">
+                        <input type="hidden" name="action" value="update">
+                        <input type="hidden" name="book_id" id="update_book_id">
+                        
+                        <div>
+                            <label>Title</label>
+                            <input type="text" name="title" id="update_title" required>
+                        </div>
+
+                        <div>
+                            <label>Description</label>
+                            <textarea name="description" id="update_description" required></textarea>
+                        </div>
+
+                        <div>
+                            <label>Ebook File</label>
+                            <input type="file" name="ebook_file" id="update_ebook_file">
+                            <small>Current file: <span id="current_ebook_file">No File</span></small>
+                        </div>
+
+                        <div>
+                            <label>Image</label>
+                            <input type="file" name="image" id="update_image">
+                            <small>Current image: <span id="current_image">No Image</span></small>
+                        </div>
+
+                        <div class="button-group">
+                            <button type="submit">Update Book</button>
+                            <button type="button" onclick="closeUpdateModal()">Cancel</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
@@ -251,11 +291,20 @@ $books = $bookController->getAllBooks();
             document.getElementById('addBookModal').style.display = 'none';
         }
 
+        function closeUpdateModal() {
+            document.getElementById('updateBookForm').style.display = 'none';
+        }
+
         // Close modal when clicking outside
         window.onclick = function(event) {
             const modal = document.getElementById('addBookModal');
             if (event.target == modal) {
                 closeAddModal();
+            }
+
+            const updateModal = document.getElementById('updateBookForm');
+            if (event.target == updateModal) {
+                closeUpdateModal();
             }
         }
 
@@ -269,4 +318,4 @@ $books = $bookController->getAllBooks();
         }
     </script>
 </body>
-</html>-
+</html>

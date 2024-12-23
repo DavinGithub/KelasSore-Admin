@@ -1,17 +1,25 @@
 <?php
-// File: controllers/KelasController.php
 require_once dirname(__FILE__) . '/../models/KelasModel.php';
 require_once dirname(__FILE__) . '/../models/BookModel.php';
+require_once dirname(__FILE__) . '/../models/MentorModel.php'; // Model untuk Mentor
 
 class KelasController
 {
     private $kelasModel;
     private $bookModel;
+    private $mentorModel; // Menambahkan MentorModel
 
     public function __construct()
     {
         $this->kelasModel = new KelasModel();
         $this->bookModel = new BookModel();
+        $this->mentorModel = new MentorModel(); // Inisialisasi MentorModel
+    }
+
+    // Method untuk mengambil semua mentor
+    public function getAllMentors()
+    {
+        return $this->mentorModel->getAllMentors(); // Ambil semua data mentor dari database
     }
 
     public function getAllKelas()

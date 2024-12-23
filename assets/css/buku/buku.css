@@ -135,3 +135,57 @@ th {
     border-radius: 8px;
 }
 
+.btn-download {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-download i {
+    margin-right: 8px;
+}
+
+.btn-download:hover {
+    background-color: #0056b3;
+}
+
+button {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+button i {
+    margin-right: 8px;
+}
+
+/* Tombol Update */
+.btn-update {
+    background-color: #007bff;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+.btn-update:hover {
+    background-color: #0056b3;
+}
+
+/* Tombol Delete */
+.btn-delete {
+    background-color: #dc3545;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+.btn-delete:hover {
+    background-color: #a71d2a;
+}
