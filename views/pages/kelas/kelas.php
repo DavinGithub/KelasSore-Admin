@@ -105,38 +105,44 @@ $deals = $kelasController->getAllKelas();
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../../../assets/css/mentor/mentor.css">
     <style>
-        /* Modal styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.4);
-        }
-        .modal-content {
-            background-color: #fefefe;
-            margin: 10% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            max-width: 600px;
-            max-height: 80%;
-            overflow-y: auto;
-        }
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            border: none;
             cursor: pointer;
         }
-        .close:hover {
-            color: black;
+        .delete-btn:hover {
+            background-color: #c82333;
         }
+
+        .status-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 14px;
+    display: inline-block;
+}
+
+/* Status-specific colors */
+.status-active {
+    background-color: #28a745;
+    color: white;
+}
+
+.status-inactive {
+    background-color: #dc3545;
+    color: white;
+}
+
+.status-pending {
+    background-color: #ffc107;
+    color: black;
+}
     </style>
 </head>
 <body>
@@ -159,12 +165,7 @@ $deals = $kelasController->getAllKelas();
 
             <div class="deals-table">
                 <div class="deals-header">
-                    <h2>Deals Details</h2>
-                    <select>
-                        <option>October</option>
-                        <option>November</option>
-                        <option>December</option>
-                    </select>
+                    <h2>Kelas</h2>
                 </div>
 
                 <table>
@@ -183,8 +184,7 @@ $deals = $kelasController->getAllKelas();
                         <?php foreach($deals as $deal): ?>
                         <tr>
                             <td>
-                                <div class="product-info">
-                                    <div class="product-image"></div>
+                                <div class="product-info">                    
                                     <span><?php echo htmlspecialchars($deal['name']); ?></span>
                                 </div>
                             </td>
@@ -193,13 +193,21 @@ $deals = $kelasController->getAllKelas();
                             <td><?php echo htmlspecialchars($deal['category']); ?></td>
                             <td>Rp.<?php echo number_format($deal['price'], 2); ?></td>
                             <td>
-                                <span class="status-badge status-<?php echo $deal['status']; ?>">
-                                    <?php echo ucfirst($deal['status']); ?>
-                                </span>
-                            </td>
+                            <?php 
+                                echo "Raw status value: " . $deal['status']; // Debug line
+                            ?>
+                            <span class="status-badge status-<?php echo $deal['status']; ?>">
+                                <?php echo ucfirst($deal['status']); ?>
+                            </span>
+                        </td>
                             <td>
-                                <button onclick="openEditModal(<?php echo $deal['id']; ?>)">Update</button>
-                                <a href="?action=delete&id=<?php echo $deal['id']; ?>" onclick="return confirm('Are you sure you want to delete this class?');">Delete</a>
+                            <button onclick="openEditModal(<?php echo $deal['id']; ?>)">Update</button>
+                                <a href="?action=delete&id=<?php echo $deal['id']; ?>" 
+                                   onclick="return confirm('Are you sure you want to delete this class?');"
+                                   class="delete-btn">
+                                    <i class="fas fa-trash"></i>
+                                    Delete
+                                </a>
                             </td>
                         </tr>
                         <?php endforeach; ?>

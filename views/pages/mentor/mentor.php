@@ -170,12 +170,13 @@ if (isset($_GET['edit']) && is_numeric($_GET['edit'])) {
                     </div>
                 <?php endif; ?>
 
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">
-                        <?php echo $editMentor ? 'Update Mentor' : 'Tambah Mentor'; ?>
-                    </button>
-                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Batal</button>
-                </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <?php echo $editMentor ? 'Update Mentor' : 'Tambah Mentor'; ?>
+                </button>
+                <button type="button" class="btn btn-secondary" style="margin-top: 10px;" onclick="closeModal()">Batal</button>
+            </div>
+
             </form>
         </div>
     </div>

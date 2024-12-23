@@ -114,25 +114,12 @@ if ($response['success'] && isset($response['data'])) {
             </div>
             
             <div class="metrics-grid">
-                <div class="metric-card">
-                    <div class="title">Total Users</div>
-                    <div class="value"><?php echo number_format($metrics['total_users']); ?></div>
-                </div>
 
                 <div class="metric-card">
                     <div class="title">Total Orders</div>
                     <div class="value"><?php echo number_format($metrics['total_orders']); ?></div>
                 </div>
 
-                <div class="metric-card">
-                    <div class="title">Total Sales</div>
-                    <div class="value">$<?php echo number_format($metrics['total_sales']); ?></div>
-                </div>
-
-                <div class="metric-card">
-                    <div class="title">Total Pending</div>
-                    <div class="value"><?php echo number_format($metrics['total_pending']); ?></div>
-                </div>
             </div>
 
             <div class="deals-table">
@@ -163,15 +150,18 @@ if ($response['success'] && isset($response['data'])) {
                             <td><?php echo htmlspecialchars($payment['name'] ?? ''); ?></td>
                             <td><?php echo htmlspecialchars($payment['nominal'] ?? ''); ?></td>
                             <td><?php echo htmlspecialchars($payment['status'] ?? ''); ?></td>
-                            <td>
-                                <a href="#" class="action-icon" onclick="openModal(
-                                    '<?php echo $payment['id']; ?>',
-                                    '<?php echo $payment['status'] ?? ''; ?>',
-                                    '<?php echo $payment['approval'] ?? ''; ?>'
-                                )">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                            </td>
+                                <td>
+                            <!-- Tombol Edit dengan Ikon dan Teks -->
+                            <a href="#" class="action-icon" onclick="openModal(
+                                '<?php echo $payment['id']; ?>',
+                                '<?php echo $payment['status'] ?? ''; ?>',
+                                '<?php echo $payment['approval'] ?? ''; ?>'
+                            )">
+                                <button class="btn-edit">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                            </a>
+                        </td>
                         </tr>
                         <?php endforeach; ?>
                     </tbody>

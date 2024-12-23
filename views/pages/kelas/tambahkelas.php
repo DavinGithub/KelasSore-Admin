@@ -1,7 +1,5 @@
-<!-- Modal for Adding Kelas -->
 <div id="addKelasModal" class="modal">
     <div class="modal-content">
-        <span class="close">&times;</span>
         <h1>Tambah Kelas</h1>
         <form action="?action=create" method="post" enctype="multipart/form-data" class="form-container">
             <div class="form-group">
@@ -15,13 +13,23 @@
             </div>
 
             <div class="form-group">
-                <label for="mentor_id">ID Mentor:</label>
-                <input type="text" name="mentor_id">
+                <label for="mentor_id">Pilih Mentor:</label>
+                <select name="mentor_id" required>
+                    <option value="">Pilih Mentor</option>
+                    <?php 
+                    // Mengambil semua mentor dari controller
+                    $mentorController = new KelasController();
+                    $allMentors = $mentorController->getAllMentors();
+                    foreach ($allMentors as $mentor): ?>
+                        <option value="<?= $mentor['id']; ?>"><?= $mentor['name']; ?></option>
+                    <?php endforeach; ?>
+                </select>
             </div>
 
+            <!-- Nama Mentor (auto-filled from dropdown) -->
             <div class="form-group">
                 <label for="name_mentor">Nama Mentor:</label>
-                <input type="text" name="name_mentor">
+                <input type="text" name="name_mentor" id="name_mentor" readonly>
             </div>
 
             <div class="form-group">
@@ -98,12 +106,11 @@
 
             <div class="form-actions">
                 <button type="submit" class="btn-primary">Tambah Kelas</button>
-                <button type="button" class="btn-secondary close">Batal</button>
+                <button type="button" class="btn-secondary" onclick="closeModal()">Batal</button>
             </div>
         </form>
     </div>
 </div>
-
 <style>
     /* Modal Styles */
     .modal {
@@ -139,15 +146,6 @@
             transform: translateY(0);
             opacity: 1;
         }
-    }
-
-    .close {
-        position: absolute;
-        right: 20px;
-        top: 20px;
-        font-size: 1.2rem;
-        cursor: pointer;
-        color: #888;
     }
 
     .form-container {
@@ -198,3 +196,21 @@
         opacity: 0.9;
     }
 </style>
+
+<script>
+    // Array of mentors available from PHP
+    const mentors = <?php echo json_encode($allMentors); ?>;
+
+    document.querySelector('[name="mentor_id"]').addEventListener('change', function () {
+        const selectedMentorId = this.value;
+        const mentorNameField = document.getElementById('name_mentor');
+        
+        // Find the selected mentor by id and set the mentor name
+        const selectedMentor = mentors.find(mentor => mentor.id == selectedMentorId);
+        mentorNameField.value = selectedMentor ? selectedMentor.name : '';
+    });
+
+    function closeModal() {
+        document.getElementById('addKelasModal').style.display = 'none';
+    }
+</script>

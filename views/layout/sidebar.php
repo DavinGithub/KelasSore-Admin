@@ -22,7 +22,9 @@ $navItems = [
 ?>
 
 <div class="sidebar">
-    <div class="logo">DashStack</div>
+<div class="logo">
+        <img src="/public/logo.svg" alt="Logo" style="max-width: 100%; height: auto;">
+    </div>
     <nav>
         <?php foreach($navItems as $item): ?>
             <a href="<?php echo $item['url']; ?>" 
