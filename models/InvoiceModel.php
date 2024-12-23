@@ -117,15 +117,8 @@ class InvoiceModel
         // Bind parameter sesuai dengan tipe data yang sesuai
         mysqli_stmt_bind_param(
             $stmt,
-            "sssssssssssi", // format tipe data
+            "sssi", // format tipe data
             $data['status'], // Jika data tidak ada, gunakan data lama
-            $data['name'], // Jika data tidak ada, gunakan data lama
-            $data['payment_price'] , // Jika data tidak ada, gunakan data lama
-            $data['nominal'] , // Jika data tidak ada, gunakan data lama
-            $data['no_rekening'] , // Jika data tidak ada, gunakan data lama
-            $data['image_pay'] , // Jika data tidak ada, gunakan data lama
-            $data['bank_name'] , // Jika data tidak ada, gunakan data lama
-            $data['transfer_date'] , // Jika data tidak ada, gunakan data lama
             $data['approval'] , // Jika data tidak ada, gunakan data lama
             $updated_at,
             $invoiceId  // Parameter terakhir untuk id invoice yang akan diupdate
