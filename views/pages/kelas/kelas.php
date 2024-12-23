@@ -212,7 +212,6 @@ $deals = $kelasController->getAllKelas();
                             <th>Tanggal Dimulai</th>
                             <th>Kategori</th>
                             <th>Harga</th>
-                            <th>Status</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -233,11 +232,7 @@ $deals = $kelasController->getAllKelas();
                                 <td><?php echo htmlspecialchars($deal['start_date']); ?></td>
                                 <td><?php echo htmlspecialchars($deal['category']); ?></td>
                                 <td>Rp.<?php echo number_format($deal['price'], 2); ?></td>
-                                <td>
-                                    <span class="status-badge status-<?php echo strtolower($deal['status']); ?>">
-                                        <?php echo ucfirst($deal['status']); ?>
-                                    </span>
-                                </td>
+                                
                                 <td>
                                     <button onclick='openEditModal(<?php echo htmlspecialchars(json_encode($dealData)); ?>)' class="btn-primary">
                                         <i class="fas fa-edit"></i>

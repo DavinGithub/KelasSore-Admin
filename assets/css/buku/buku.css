@@ -189,3 +189,10 @@ button i {
 .btn-delete:hover {
     background-color: #a71d2a;
 }
+
+/* Sesuaikan ukuran gambar di tabel */
+.deals-table .product-image img {
+    width: 40px; /* Ubah sesuai dengan ukuran yang diinginkan */
+    height: 40px; /* Agar proporsional */
+    border-radius: 8px; /* Menambahkan border-radius untuk sudut yang lebih lembut */
+}
