@@ -106,7 +106,7 @@ class InvoiceModel
     public function updateInvoice($invoiceId, $data)
     {
         // Query untuk memperbarui data di tabel invoices
-        $query = "UPDATE invoices SET status = ?, name = ?, payment_price = ?, nominal = ?, no_rekening = ?, image_pay = ?, bank_name = ?, transfer_date = ?, approval = ?, updated_at = ? WHERE id = ?";
+        $query = "UPDATE invoices SET status = ?, approval = ?, updated_at = ? WHERE id = ?";
 
         // Siapkan pernyataan SQL untuk eksekusi
         $stmt = mysqli_prepare($this->conn, $query);
@@ -118,10 +118,10 @@ class InvoiceModel
         mysqli_stmt_bind_param(
             $stmt,
             "sssi", // format tipe data
-            $data['status'], // Jika data tidak ada, gunakan data lama
-            $data['approval'] , // Jika data tidak ada, gunakan data lama
+            $data['status'],
+            $data['approval'],
             $updated_at,
-            $invoiceId  // Parameter terakhir untuk id invoice yang akan diupdate
+            $invoiceId // Parameter terakhir untuk id invoice yang akan diupdate
         );
 
         // Mulai transaksi
@@ -179,6 +179,7 @@ class InvoiceModel
             }
         }
     }
+
 
     public function deleteInvoice($invoiceId)
     {
