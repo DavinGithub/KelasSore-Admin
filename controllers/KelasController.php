@@ -53,10 +53,15 @@ class KelasController
         $data['mentor_id'] = isset($data['mentor_id']) && !empty($data['mentor_id']) ? $data['mentor_id'] : NULL;
 
         // Handle start_date and end_date similar to updateKelas
-        $data['start_date'] = !empty($data['start_date']) ? $data['start_date'] : NULL;
-        $data['end_date'] = !empty($data['end_date']) ? $data['end_date'] : NULL;
+        foreach (['start_date', 'end_date'] as $dateField) {
+            if (!empty($data[$dateField])) {
+                $data[$dateField] = date('Y-m-d', strtotime($data[$dateField]));
+            } else {
+                $data[$dateField] = NULL;
+            }
 
-        return $this->kelasModel->insertKelas($data);
+            return $this->kelasModel->insertKelas($data);
+        }
     }
 
     public function updateKelas($kelasId, $data, $imageFile)
