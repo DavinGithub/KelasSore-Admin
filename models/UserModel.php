@@ -26,5 +26,12 @@ class UserModel {
         mysqli_stmt_bind_param($stmt, "ssi", $profilePicturePath, $updated_at, $adminId);
         return mysqli_stmt_execute($stmt);
     }
+
+    public function getTotalUser()
+    {
+        $query = "SELECT COUNT(*) as total FROM users";
+        $result = mysqli_query($this->conn, $query);
+        return mysqli_fetch_assoc($result)['total'];
+    }
 }
 ?>
