@@ -63,5 +63,9 @@ class UserController {
             return "Error: Gagal memindahkan file";
         }
     }
+
+    public function getTotalUser() {
+        return $this->adminModel->getTotalUser();
+    }
 }
 ?>

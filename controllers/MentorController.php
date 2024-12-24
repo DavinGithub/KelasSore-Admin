@@ -98,4 +98,8 @@ class MentorController {
         }
         return "Error: Gagal memindahkan file";
     }
+
+    public function getTotalMentor() {
+        return $this->mentorModel->getTotalMentor();
+    }
 }
