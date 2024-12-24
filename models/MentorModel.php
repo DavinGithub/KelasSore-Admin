@@ -139,11 +139,11 @@ class MentorModel {
         return mysqli_stmt_execute($stmt);
     }
 
-    public function getTotalMentor()
-    {
+    public function getTotalMentor() {
         $query = "SELECT COUNT(*) as total FROM mentors";
         $result = mysqli_query($this->conn, $query);
         return mysqli_fetch_assoc($result);
     }
+    
 }
 ?>

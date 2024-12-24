@@ -27,11 +27,11 @@ class UserModel {
         return mysqli_stmt_execute($stmt);
     }
 
-    public function getTotalUser()
-    {
+    public function getTotalUser() {
         $query = "SELECT COUNT(*) as total FROM users";
         $result = mysqli_query($this->conn, $query);
-        return mysqli_fetch_assoc($result)['total'];
+        return mysqli_fetch_assoc($result);
     }
+    
 }
 ?>

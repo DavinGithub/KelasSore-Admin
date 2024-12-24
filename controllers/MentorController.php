@@ -1,4 +1,5 @@
 <?php
+//file: controllers/MentorController.php
 include_once dirname(__FILE__) . '/../services/database.php';
 include_once dirname(__FILE__) . '/../models/MentorModel.php';
 
@@ -100,6 +101,10 @@ class MentorController {
     }
 
     public function getTotalMentor() {
-        return $this->mentorModel->getTotalMentor();
+        $result = $this->mentorModel->getTotalMentor();
+        return [
+            'success' => true,
+            'data' => $result['total'] ?? 0
+        ];
     }
 }

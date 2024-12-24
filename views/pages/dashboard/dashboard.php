@@ -17,9 +17,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             'status' => $newStatus,
             'approval' => $approval,
         ];
-        
+
         $response = json_decode($invoicesController->updateInvoice($invoiceId, $data), true);
-        
+
         header('Content-Type: application/json');
         echo json_encode($response);
         exit;
@@ -27,25 +27,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         echo json_encode(['success' => false, 'message' => 'Invalid input']);
         exit;
     }
-}   
+}
 
 // Get all data
 $invoicesResponse = json_decode($invoicesController->getAllInvoices(), true);
-$totalUsers = $userController->getTotalUser(); // Direct array, no json_decode needed
-$totalMentors = $mentorController->getTotalMentor(); // Direct array, no json_decode needed
+$totalUsersResponse = $userController->getTotalUser();
+$totalMentorsResponse = $mentorController->getTotalMentor();
 
-$payments = [];
 $metrics = [
-    'total_users' => isset($totalUsers['data']) ? $totalUsers['data'] : 0,
-    'total_mentors' => isset($totalMentors['data']) ? $totalMentors['data'] : 0,
+    'total_users' => $totalUsersResponse['success'] ? $totalUsersResponse['data'] : 0,
+    'total_mentors' => $totalMentorsResponse['success'] ? $totalMentorsResponse['data'] : 0,
     'total_orders' => 0,
     'total_sales' => 0,
-    'total_pending' => 0
+    'total_pending' => 0,
 ];
 
 if ($invoicesResponse['success'] && isset($invoicesResponse['data'])) {
     $payments = $invoicesResponse['data'];
-   
+
     foreach ($payments as $payment) {
         $metrics['total_orders']++;
         $metrics['total_sales'] += floatval($payment['payment_price'] ?? 0);
@@ -56,8 +55,9 @@ if ($invoicesResponse['success'] && isset($invoicesResponse['data'])) {
 }
 ?>
 
-<!DOCTYPE html>         
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -72,15 +72,18 @@ if ($invoicesResponse['success'] && isset($invoicesResponse['data'])) {
             border-radius: 0.5rem;
             margin: 1rem 0;
         }
+
         .empty-state i {
             font-size: 3rem;
             color: #9ca3af;
             margin-bottom: 1rem;
         }
+
         .empty-state p {
             color: #4b5563;
             font-size: 1rem;
         }
+
         .modal {
             display: none;
             position: fixed;
@@ -90,8 +93,9 @@ if ($invoicesResponse['success'] && isset($invoicesResponse['data'])) {
             width: 100%;
             height: 100%;
             overflow: auto;
-            background-color: rgba(0,0,0,0.4);
+            background-color: rgba(0, 0, 0, 0.4);
         }
+
         .modal-content {
             background-color: #fefefe;
             margin: 15% auto;
@@ -101,6 +105,7 @@ if ($invoicesResponse['success'] && isset($invoicesResponse['data'])) {
             max-width: 500px;
             border-radius: 8px;
         }
+
         .close-btn {
             color: #aaa;
             float: right;
@@ -108,27 +113,32 @@ if ($invoicesResponse['success'] && isset($invoicesResponse['data'])) {
             font-weight: bold;
             cursor: pointer;
         }
+
         .close-btn:hover {
             color: #000;
         }
+
         .metrics-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 1.5rem;
             margin-top: 2rem;
         }
+
         .metric-card {
             background: white;
             padding: 1.5rem;
             border-radius: 0.5rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
+
         .metric-card .title {
             color: #6b7280;
             font-size: 0.875rem;
             font-weight: 500;
             margin-bottom: 0.5rem;
         }
+
         .metric-card .value {
             font-size: 1.875rem;
             font-weight: 600;
@@ -136,6 +146,7 @@ if ($invoicesResponse['success'] && isset($invoicesResponse['data'])) {
         }
     </style>
 </head>
+
 <body>
     <?php include '../../../views/layout/sidebar.php'; ?>
 
@@ -144,7 +155,7 @@ if ($invoicesResponse['success'] && isset($invoicesResponse['data'])) {
             <div class="top-bar">
                 <h1>Dashboard</h1>
             </div>
-            
+
             <div class="metrics-grid">
                 <div class="metric-card">
                     <div class="title">Total Orders</div>
@@ -175,7 +186,7 @@ if ($invoicesResponse['success'] && isset($invoicesResponse['data'])) {
             approvalStatusSelect.value = currentApproval || '';
             modal.style.display = 'block';
         }
-        
+
         function closeModal() {
             modal.style.display = 'none';
         }
@@ -192,25 +203,26 @@ if ($invoicesResponse['success'] && isset($invoicesResponse['data'])) {
             e.preventDefault();
             const formData = new FormData(form);
 
-            fetch('', {  // Empty string means submit to the same page
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Invoice status updated successfully!');
-                    closeModal();
-                    location.reload();
-                } else {
-                    alert('Failed to update invoice status: ' + data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred. Please try again.');
-            });
+            fetch('', { // Empty string means submit to the same page
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Invoice status updated successfully!');
+                        closeModal();
+                        location.reload();
+                    } else {
+                        alert('Failed to update invoice status: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred. Please try again.');
+                });
         });
     </script>
 </body>
+
 </html>
