@@ -27,19 +27,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 
 $response = json_decode($invoicesController->getAllInvoices(), true);
 $payments = [];
-$metrics = [
-    'total_users' => 0,
-    'total_orders' => 0,
-    'total_sales' => 0,
-    'total_pending' => 0
-];
 
 if ($response['success'] && isset($response['data'])) {
     $payments = $response['data'];
    
     foreach ($payments as $payment) {
-        $metrics['total_orders']++;
-        $metrics['total_sales'] += floatval($payment['payment_price'] ?? 0);
         if (isset($payment['status']) && $payment['status'] === 'menunggu pembayaran') {
             $metrics['total_pending']++;
         }
@@ -54,7 +46,7 @@ if ($response['success'] && isset($response['data'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../../../assets/css/dashboard/dashboard.css">
+    <link rel="stylesheet" href="../../../assets/css/pembayaran/pembayaran.css">
     <style>
         .empty-state {
             text-align: center;
@@ -113,27 +105,83 @@ if ($response['success'] && isset($response['data'])) {
                 <h1>Dashboard</h1>
             </div>
             
-            <div class="metrics-grid">
-
-                <div class="metric-card">
-                    <div class="title">Total Orders</div>
-                    <div class="value"><?php echo number_format($metrics['total_orders']); ?></div>
-                </div>
-                <div class="metric-card">
-                    <div class="title">Total Orders</div>
-                    <div class="value"><?php echo number_format($metrics['total_orders']); ?></div>
-                </div>
-                <div class="metric-card">
-                    <div class="title">Total Orders</div>
-                    <div class="value"><?php echo number_format($metrics['total_orders']); ?></div>
+            <div class="deals-table">
+                <div class="deals-header">
+                    <h2>Status Pembayaran</h2>
                 </div>
 
-            </div>
-
-         
+                <?php if (empty($payments)): ?>
+                <div class="empty-state">
+                    <i class="fas fa-inbox"></i>
+                    <p>Tidak ada data pembayaran yang tersedia saat ini.</p>
+                </div>
+                <?php else: ?>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Nominal</th>
+                            <th>Name Kelas</th>
+                            <th>Status Pembayaran</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php $no = 1; foreach ($payments as $payment): ?>
+                        <tr>
+                            <td><?php echo $no++; ?></td>
+                            <td><?php echo htmlspecialchars($payment['name'] ?? ''); ?></td>
+                            <td><?php echo htmlspecialchars($payment['nominal'] ?? ''); ?></td>
+                            <td><?php echo htmlspecialchars($payment['status'] ?? ''); ?></td>
+                                <td>
+                            <a href="#" class="action-icon" onclick="openModal(
+                                '<?php echo $payment['id']; ?>',
+                                '<?php echo $payment['status'] ?? ''; ?>',
+                                '<?php echo $payment['approval'] ?? ''; ?>'
+                            )">
+                                <button class="btn-edit">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                            </a>
+                        </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+                <?php endif; ?>
             </div>
         </div>
     </div> 
+
+    <div id="updateInvoiceStatusModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h2>Update Invoice Status</h2>
+            <form id="updateInvoiceStatusForm">
+                <input type="hidden" name="action" value="update_invoice_status">
+                <input type="hidden" id="invoiceId" name="invoice_id">
+                
+                <div>
+                    <label for="paymentStatus">Payment Status:</label>
+                    <select id="paymentStatus" name="status" required>
+                        <option value="menunggu pembayaran">Menunggu Pembayaran</option>
+                        <option value="terbayar">Terbayar</option>
+                        <option value="gagal">Gagal</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="approvalStatus">Approval Status:</label>
+                    <select id="approvalStatus" name="approval" required>
+                        <option value="disetujui">Disetujui</option>
+                        <option value="ditolak">Ditolak</option>
+                    </select>
+                </div>
+
+                <button type="submit">Update Status</button>
+            </form>
+        </div>
+    </div>
 
     <script>
         const modal = document.getElementById('updateInvoiceStatusModal');
@@ -158,13 +206,11 @@ if ($response['success'] && isset($response['data'])) {
             }
         }
 
-        // Submit form with AJAX
         const form = document.getElementById('updateInvoiceStatusForm');
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             const formData = new FormData(form);
-
-            fetch('', {  // Empty string means submit to the same page
+            fetch('', { 
                 method: 'POST',
                 body: formData
             })
