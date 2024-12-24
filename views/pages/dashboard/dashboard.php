@@ -1,7 +1,11 @@
 <?php
 include dirname(__FILE__) . '/../../../controllers/InvoiceController.php';
+include dirname(__FILE__) . '/../../../controllers/UserController.php';
+include dirname(__FILE__) . '/../../../controllers/MentorController.php';
 
 $invoicesController = new InvoicesController();
+$userController = new UserController();
+$mentorController = new MentorController();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'update_invoice_status') {
     $invoiceId = $_POST['invoice_id'] ?? null;
@@ -23,19 +27,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         echo json_encode(['success' => false, 'message' => 'Invalid input']);
         exit;
     }
-}
+}   
 
-$response = json_decode($invoicesController->getAllInvoices(), true);
+// Get all data
+$invoicesResponse = json_decode($invoicesController->getAllInvoices(), true);
+$totalUsers = $userController->getTotalUser(); // Direct array, no json_decode needed
+$totalMentors = $mentorController->getTotalMentor(); // Direct array, no json_decode needed
+
 $payments = [];
 $metrics = [
-    'total_users' => 0,
+    'total_users' => isset($totalUsers['data']) ? $totalUsers['data'] : 0,
+    'total_mentors' => isset($totalMentors['data']) ? $totalMentors['data'] : 0,
     'total_orders' => 0,
     'total_sales' => 0,
     'total_pending' => 0
 ];
 
-if ($response['success'] && isset($response['data'])) {
-    $payments = $response['data'];
+if ($invoicesResponse['success'] && isset($invoicesResponse['data'])) {
+    $payments = $invoicesResponse['data'];
    
     foreach ($payments as $payment) {
         $metrics['total_orders']++;
@@ -47,7 +56,7 @@ if ($response['success'] && isset($response['data'])) {
 }
 ?>
 
-<!DOCTYPE html>
+<!DOCTYPE html>         
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -102,10 +111,33 @@ if ($response['success'] && isset($response['data'])) {
         .close-btn:hover {
             color: #000;
         }
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        .metric-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .metric-card .title {
+            color: #6b7280;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        .metric-card .value {
+            font-size: 1.875rem;
+            font-weight: 600;
+            color: #111827;
+        }
     </style>
 </head>
 <body>
-   <?php include '../../../views/layout/sidebar.php'; ?>
+    <?php include '../../../views/layout/sidebar.php'; ?>
 
     <div class="main-content">
         <div class="container">
@@ -114,26 +146,22 @@ if ($response['success'] && isset($response['data'])) {
             </div>
             
             <div class="metrics-grid">
-
                 <div class="metric-card">
                     <div class="title">Total Orders</div>
                     <div class="value"><?php echo number_format($metrics['total_orders']); ?></div>
                 </div>
                 <div class="metric-card">
-                    <div class="title">Total Orders</div>
-                    <div class="value"><?php echo number_format($metrics['total_orders']); ?></div>
+                    <div class="title">Total Mentor</div>
+                    <div class="value"><?php echo number_format($metrics['total_mentors']); ?></div>
                 </div>
                 <div class="metric-card">
-                    <div class="title">Total Orders</div>
-                    <div class="value"><?php echo number_format($metrics['total_orders']); ?></div>
+                    <div class="title">Total User</div>
+                    <div class="value"><?php echo number_format($metrics['total_users']); ?></div>
                 </div>
-
-            </div>
-
-         
             </div>
         </div>
-    </div> 
+    </div>
+
 
     <script>
         const modal = document.getElementById('updateInvoiceStatusModal');
