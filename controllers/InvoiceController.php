@@ -61,5 +61,11 @@ class InvoicesController
             return json_encode(['success' => false, 'message' => 'Failed to delete invoice']);
         }
     }
+
+    public function getdetailinvoicesbyid($invoiceId)
+    {
+        $invoice = $this->invoiceModel->getdetailinvoicesbyid($invoiceId);
+        return json_encode(['success' => true, 'data' => $invoice]);
+    }
 }
 ?>

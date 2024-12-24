@@ -168,4 +168,14 @@ class InvoiceModel
         mysqli_stmt_bind_param($stmt, "i", $invoiceId);
         return mysqli_stmt_execute($stmt);
     }
+
+    public function getdetailinvoicesbyid($invoiceId)
+    {
+        $query = "SELECT * FROM invoices WHERE id = ?";
+        $stmt = mysqli_prepare($this->conn, $query);
+        mysqli_stmt_bind_param($stmt, "i", $invoiceId);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+        return mysqli_fetch_assoc($result);
+    }
 }

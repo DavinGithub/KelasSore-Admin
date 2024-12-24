@@ -65,7 +65,11 @@ class UserController {
     }
 
     public function getTotalUser() {
-        return $this->adminModel->getTotalUser();
+        $result = $this->adminModel->getTotalUser();
+        return [
+            'success' => true,
+            'data' => $result['total'] ?? 0
+        ];
     }
 }
 ?>
