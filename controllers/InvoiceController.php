@@ -8,7 +8,7 @@ class InvoicesController
 
     public function __construct()
     {
-        $this->invoiceModel = new InvoiceModel();
+        $this->invoiceModel = new InvoiceModel(); 
     }
 
     // Create new invoice
