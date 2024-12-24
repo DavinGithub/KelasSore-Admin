@@ -61,9 +61,11 @@
             </div>
 
             <div class="form-group">
-                <label for="start_date">Tanggal Mulai:</label>
-                <input type="date" name="start_date" required>
+                <label for="schedule">Tanggal Mulai:</label>
+                <input type="date" name="schedule" required>
             </div>
+
+           
 
             <div class="form-group">
                 <label for="end_date">Tanggal Selesai:</label>
@@ -73,6 +75,19 @@
             <div class="form-group">
                 <label for="link_wa">Link WhatsApp:</label>
                 <input type="url" name="link_wa">
+            </div>
+
+            <div class="form-group">
+                <label for="sesion_1">Sesion 1</label>
+                <input type="url" name="sesion_1" required> 
+            </div>
+            <div class="form-group">
+                <label for="sesion_2">Sesion 2</label>
+                <input type="url" name="sesion_2" required> 
+            </div>
+            <div class="form-group">
+                <label for="sesion_3">Sesion 3</label>
+                <input type="url" name="sesion_3" required> 
             </div>
 
             <div class="form-group">

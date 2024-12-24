@@ -1,20 +1,23 @@
 <?php
-function isActive($menuItem) {
-    // Ambil current page dari URL
-    $currentUrl = $_SERVER['REQUEST_URI'];
-    // Jika di dashboard (root path atau /index.php)
-    if ($currentUrl == '/' || $currentUrl == '/index.php' || strpos($currentUrl, 'dashboard') !== false) {
-        $currentPage = 'dashboard';
-    } else {
-        // Extract page name dari URL (mentor, kelas, dll)
-        preg_match('/pages\/([^\/]+)/', $currentUrl, $matches);
-        $currentPage = isset($matches[1]) ? $matches[1] : 'dashboard';
+if (!function_exists('isActive')) {
+    function isActive($menuItem) {
+        // Ambil current page dari URL
+        $currentUrl = $_SERVER['REQUEST_URI'];
+        // Jika di dashboard (root path atau /index.php)
+        if ($currentUrl == '/' || $currentUrl == '/index.php' || strpos($currentUrl, 'dashboard') !== false) {
+            $currentPage = 'dashboard';
+        } else {
+            // Extract page name dari URL (mentor, kelas, dll)
+            preg_match('/pages\/([^\/]+)/', $currentUrl, $matches);
+            $currentPage = isset($matches[1]) ? $matches[1] : 'dashboard';
+        }
+        return (strtolower($menuItem) === strtolower($currentPage)) ? 'active' : '';
     }
-    return (strtolower($menuItem) === strtolower($currentPage)) ? 'active' : '';
 }
 
 $navItems = [
     ['icon' => 'fa-th-large', 'text' => 'Dashboard', 'url' => '/views/pages/dashboard/dashboard.php'],
+    ['icon' => 'fa-th-large', 'text' => 'Pembayaran', 'url' => '/views/pages/pembayaran/pembayaran.php'],
     ['icon' => 'fa-chalkboard-teacher', 'text' => 'Mentor', 'url' => '/views/pages/mentor/mentor.php'],
     ['icon' => 'fa-graduation-cap', 'text' => 'Kelas', 'url' => '/views/pages/kelas/kelas.php'],
     ['icon' => 'fa-book', 'text' => 'Buku', 'url' => '/views/pages/buku/buku.php'],

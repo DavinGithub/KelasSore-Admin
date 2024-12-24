@@ -1,3 +1,18 @@
+<?php
+require_once dirname(__FILE__) . '/../../../controllers/KelasController.php';
+require_once dirname(__FILE__) . '/../../../controllers/MentorController.php';
+require_once dirname(__FILE__) . '/../../../controllers/BookController.php';
+
+// Initialize controllers
+$kelasController = new KelasController();
+$mentorController = new MentorController();
+$bookController = new BookController();
+
+// Get all mentors and books for dropdowns
+$allMentors = $mentorController->getAllMentors();
+$allBooks = $bookController->getAllBooks();
+?>
+
 <div id="updateKelasModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeEditModal()">&times;</span>
@@ -20,7 +35,9 @@
                 <select name="mentor_id" id="updateMentorId" required>
                     <option value="">Pilih Mentor</option>
                     <?php foreach ($allMentors as $mentor): ?>
-                        <option value="<?= $mentor['id']; ?>"><?= $mentor['name']; ?></option>
+                        <option value="<?= htmlspecialchars($mentor['id']); ?>">
+                            <?= htmlspecialchars($mentor['name']); ?>
+                        </option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -59,8 +76,8 @@
             </div>
 
             <div class="form-group">
-                <label for="updateStartDate">Tanggal Mulai:</label>
-                <input type="date" name="start_date" id="updateStartDate" required>
+                <label for="updateSchedule">Tanggal Mulai:</label>
+                <input type="date" name="schedule" id="updateSchedule" required>
             </div>
 
             <div class="form-group">
@@ -69,8 +86,23 @@
             </div>
 
             <div class="form-group">
+                <label for="updateSesion1">Sesion 1:</label>
+                <input type="url" name="sesion_1" id="updateSesion1" required>
+            </div>
+
+            <div class="form-group">
+                <label for="updateSesion2">Sesion 2:</label>
+                <input type="url" name="sesion_2" id="updateSesion2" required>
+            </div>
+
+            <div class="form-group">
+                <label for="updateSesion3">Sesion 3:</label>
+                <input type="url" name="sesion_3" id="updateSesion3" required>
+            </div>
+
+            <div class="form-group">
                 <label for="updateLinkWa">Link WhatsApp:</label>
-                <input type="url" name="link_wa" id="updateLinkWa">
+                <input type="url" name="link_wa" id="updateLinkWa" required>
             </div>
 
             <div class="form-group">
@@ -97,7 +129,9 @@
                 <label for="updateBookIds">Buku yang Dibaca:</label>
                 <select name="book_ids[]" id="updateBookIds" multiple>
                     <?php foreach ($allBooks as $book): ?>
-                        <option value="<?= $book['id']; ?>"><?= $book['title']; ?></option>
+                        <option value="<?= htmlspecialchars($book['id']); ?>">
+                            <?= htmlspecialchars($book['title']); ?>
+                        </option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -111,57 +145,71 @@
 </div>
 
 <script>
-    // Update the mentor name when selecting a mentor in the update form
-    document.querySelector('#updateMentorId').addEventListener('change', function() {
-        const selectedMentorId = this.value;
-        const mentorNameField = document.getElementById('updateNameMentor');
-        
-        const selectedMentor = mentors.find(mentor => mentor.id == selectedMentorId);
-        mentorNameField.value = selectedMentor ? selectedMentor.name : '';
-    });
+// Function to format date string
+function formatDate(dateString) {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return '';
+    return date.toISOString().split('T')[0];
+}
 
-    // Function to get class data - this should be implemented to fetch the actual data
-    function getClassData(id) {
-        // Make an AJAX request to get the class data
-        // This is a placeholder - you'll need to implement the actual data fetching
-        fetch(`get_class_data.php?id=${id}`)
-            .then(response => response.json())
-            .then(data => {
-                // Populate the form fields with the retrieved data
-                document.getElementById('updateKelasId').value = data.id;
-                document.getElementById('updateName').value = data.name;
-                document.getElementById('updateDescription').value = data.description;
-                document.getElementById('updateMentorId').value = data.mentor_id;
-                document.getElementById('updateNameMentor').value = data.name_mentor;
-                document.getElementById('updateCategory').value = data.category;
-                document.getElementById('updateKurikulum').value = data.kurikulum;
-                document.getElementById('updatePrice').value = data.price;
-                document.getElementById('updateQuota').value = data.quota;
-                document.getElementById('updateQuotaLeft').value = data.quota_left;
-                document.getElementById('updateStartDate').value = data.start_date;
-                document.getElementById('updateEndDate').value = data.end_date;
-                document.getElementById('updateLinkWa').value = data.link_wa;
-                document.getElementById('updateStatus').value = data.status;
-                document.getElementById('updateWhatWillLearn1').value = data.what_will_learn_1;
-                document.getElementById('updateWhatWillLearn2').value = data.what_will_learn_2;
-                document.getElementById('updateWhatWillLearn3').value = data.what_will_learn_3;
+// Function to open edit modal and populate data
+function openEditModal(dealData) {
+    const updateModal = document.getElementById('updateKelasModal');
+    updateModal.style.display = 'block';
 
-                // Set the selected books
-                const bookSelect = document.getElementById('updateBookIds');
-                if (data.book_ids) {
-                    data.book_ids.forEach(bookId => {
-                        for (let option of bookSelect.options) {
-                            if (option.value == bookId) {
-                                option.selected = true;
-                            }
-                        }
-                    });
-                }
-            })
-            .catch(error => console.error('Error:', error));
+    // Populate form fields
+    document.getElementById('updateKelasId').value = dealData.id;
+    document.getElementById('updateName').value = dealData.name;
+    document.getElementById('updateDescription').value = dealData.description;
+    document.getElementById('updateMentorId').value = dealData.mentor_id;
+    document.getElementById('updateNameMentor').value = dealData.name_mentor;
+    document.getElementById('updateCategory').value = dealData.category;
+    document.getElementById('updateKurikulum').value = dealData.kurikulum;
+    document.getElementById('updatePrice').value = dealData.price;
+    document.getElementById('updateQuota').value = dealData.quota;
+    document.getElementById('updateQuotaLeft').value = dealData.quota_left;
+    document.getElementById('updateSchedule').value = formatDate(dealData.schedule);
+    document.getElementById('updateEndDate').value = formatDate(dealData.end_date);
+    document.getElementById('updateLinkWa').value = dealData.link_wa;
+    document.getElementById('updateStatus').value = dealData.status;
+    
+    // Update session fields
+    document.getElementById('updateSesion1').value = dealData.sesion_1;
+    document.getElementById('updateSesion2').value = dealData.sesion_2;
+    document.getElementById('updateSesion3').value = dealData.sesion_3;
+    
+    // Update what will learn fields
+    document.getElementById('updateWhatWillLearn1').value = dealData.what_will_learn_1;
+    document.getElementById('updateWhatWillLearn2').value = dealData.what_will_learn_2;
+    document.getElementById('updateWhatWillLearn3').value = dealData.what_will_learn_3;
+
+    // Handle book selections
+    const bookSelect = document.getElementById('updateBookIds');
+    if (dealData.book_ids && Array.isArray(dealData.book_ids)) {
+        Array.from(bookSelect.options).forEach(option => {
+            option.selected = dealData.book_ids.includes(parseInt(option.value));
+        });
     }
+}
 
-    function closeEditModal() {
-        document.getElementById('updateKelasModal').style.display = 'none';
+// Function to close edit modal
+function closeEditModal() {
+    const updateModal = document.getElementById('updateKelasModal');
+    updateModal.style.display = 'none';
+}
+
+// Update mentor name when mentor is selected
+document.getElementById('updateMentorId').addEventListener('change', function() {
+    const selectedOption = this.options[this.selectedIndex];
+    document.getElementById('updateNameMentor').value = selectedOption.text;
+});
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const updateModal = document.getElementById('updateKelasModal');
+    if (event.target == updateModal) {
+        updateModal.style.display = 'none';
     }
+}
 </script>
