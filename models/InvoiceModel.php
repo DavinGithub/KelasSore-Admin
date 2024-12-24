@@ -170,12 +170,15 @@ class InvoiceModel
     }
 
     public function getdetailinvoicesbyid($invoiceId)
-    {
-        $query = "SELECT * FROM invoices WHERE id = ?";
-        $stmt = mysqli_prepare($this->conn, $query);
-        mysqli_stmt_bind_param($stmt, "i", $invoiceId);
-        mysqli_stmt_execute($stmt);
-        $result = mysqli_stmt_get_result($stmt);
-        return mysqli_fetch_assoc($result);
-    }
+{
+    $query = "SELECT status, name, payment_price, nominal, no_rekening, image_pay, bank_name FROM invoices WHERE id = ?";
+    $stmt = mysqli_prepare($this->conn, $query);
+    mysqli_stmt_bind_param($stmt, "i", $invoiceId);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    return mysqli_fetch_assoc($result);
+}
+
+
+
 }

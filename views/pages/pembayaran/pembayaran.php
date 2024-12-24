@@ -134,6 +134,11 @@ if ($response['success'] && isset($response['data'])) {
                             <td><?php echo htmlspecialchars($payment['nominal'] ?? ''); ?></td>
                             <td><?php echo htmlspecialchars($payment['status'] ?? ''); ?></td>
                                 <td>
+                                <div class="action-buttons">
+                                <a href="invoice-detail.php?id=<?php echo $payment['id']; ?>" class="btn btn-info">
+                                    <i class="fas fa-eye"></i> Detail
+                                </a>
+
                             <a href="#" class="action-icon" onclick="openModal(
                                 '<?php echo $payment['id']; ?>',
                                 '<?php echo $payment['status'] ?? ''; ?>',
@@ -143,6 +148,7 @@ if ($response['success'] && isset($response['data'])) {
                                     <i class="fas fa-edit"></i> Edit
                                 </button>
                             </a>
+                                </div>
                         </td>
                         </tr>
                         <?php endforeach; ?>
