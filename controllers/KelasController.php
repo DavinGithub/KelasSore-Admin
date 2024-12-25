@@ -175,4 +175,13 @@ class KelasController
 
         return false;
     }
+
+    public function gettotalkelas()
+    {
+        $result = $this->kelasModel->getTotalKelas();
+        return [
+            'success' => true,
+            'data' => $result['total'] ?? 0
+        ];
+    }
 }

@@ -89,5 +89,13 @@ class BookController {
 
         return $result;
     }
+
+    public function getTotalBooks() {
+        $result = $this->bookModel->getTotalBooks();
+        return [
+            'success' => true,
+            'data' => $result['total'] ?? 0
+        ];
+    }
 }
 ?>

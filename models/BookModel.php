@@ -67,5 +67,11 @@ class BookModel {
         mysqli_stmt_bind_param($stmt, "i", $bookId);
         return mysqli_stmt_execute($stmt);
     }
+
+    public function getTotalBooks() {
+        $query = "SELECT COUNT(*) as total FROM books";
+        $result = mysqli_query($this->conn, $query);
+        return mysqli_fetch_assoc($result);
+    }
 }
 ?>

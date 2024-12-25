@@ -260,4 +260,11 @@
         
             return $mentor;
         }        
+
+        public function getTotalKelas()
+        {
+            $query = "SELECT COUNT(*) as total FROM kelas";
+            $result = mysqli_query($this->conn, $query);
+            return mysqli_fetch_assoc($result);
+        }
     }
