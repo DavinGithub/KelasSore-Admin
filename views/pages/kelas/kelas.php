@@ -115,7 +115,7 @@ $deals = $kelasController->getAllKelas();
 <body>
     <?php include '../../../views/layout/sidebar.php'; ?>
 
-    <div class="main-content">
+    <div class="main-content">  
         <div class="container">
             <?php if (isset($errorMessage)): ?>
                 <div class="error-message" style="color: red; margin-bottom: 15px;">
@@ -123,12 +123,13 @@ $deals = $kelasController->getAllKelas();
                 </div>
             <?php endif; ?>
 
-            <div class="top-bar">
-                <h1>Kelas</h1>
-                <button class="add-mentor-btn" id="openModalBtn">
-                    <i class="fas fa-plus"></i> Tambah Kelas
-                </button>
-            </div>
+            <!-- Change the button to a regular link -->
+<div class="top-bar">
+    <h1>Kelas</h1>
+    <a href="tambahkelas.php" class="add-mentor-btn">
+        <i class="fas fa-plus"></i> Tambah Kelas
+    </a>
+</div>
 
             <div class="deals-table">
                 <div class="deals-header">
@@ -182,8 +183,7 @@ $deals = $kelasController->getAllKelas();
                 </table>
             </div>
 
-            <!-- Include the modal components -->
-            <?php include 'tambahkelas.php'; ?>
+          
             <?php include 'updatekelas.php'; ?>
         </div>
     </div>
