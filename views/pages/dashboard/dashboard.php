@@ -1,47 +1,42 @@
 <?php
+// Include necessary controllers
 include dirname(__FILE__) . '/../../../controllers/InvoiceController.php';
 include dirname(__FILE__) . '/../../../controllers/UserController.php';
 include dirname(__FILE__) . '/../../../controllers/MentorController.php';
+include dirname(__FILE__) . '/../../../controllers/KelasController.php';  // Include KelasController
+include dirname(__FILE__) . '/../../../controllers/BookController.php';  // Include BookController
 
 $invoicesController = new InvoicesController();
 $userController = new UserController();
 $mentorController = new MentorController();
+$kelasController = new KelasController();  // Instantiate KelasController
+$bookController = new BookController();  // Instantiate BookController
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'update_invoice_status') {
-    $invoiceId = $_POST['invoice_id'] ?? null;
-    $newStatus = $_POST['status'] ?? null;
-    $approval = $_POST['approval'] ?? null;
+// Fetch the total classes
+$totalKelasResponse = $kelasController->gettotalkelas();
 
-    if ($invoiceId && $newStatus && $approval) {
-        $data = [
-            'status' => $newStatus,
-            'approval' => $approval,
-        ];
-
-        $response = json_decode($invoicesController->updateInvoice($invoiceId, $data), true);
-
-        header('Content-Type: application/json');
-        echo json_encode($response);
-        exit;
-    } else {
-        echo json_encode(['success' => false, 'message' => 'Invalid input']);
-        exit;
-    }
-}
-
-// Get all data
-$invoicesResponse = json_decode($invoicesController->getAllInvoices(), true);
+// Get the total users and mentors
 $totalUsersResponse = $userController->getTotalUser();
 $totalMentorsResponse = $mentorController->getTotalMentor();
 
+// Get total books
+$totalBooksResponse = $bookController->getTotalBooks();
+
+// Get all invoices data
+$invoicesResponse = json_decode($invoicesController->getAllInvoices(), true);
+
+// Initialize metrics
 $metrics = [
     'total_users' => $totalUsersResponse['success'] ? $totalUsersResponse['data'] : 0,
     'total_mentors' => $totalMentorsResponse['success'] ? $totalMentorsResponse['data'] : 0,
     'total_orders' => 0,
     'total_sales' => 0,
     'total_pending' => 0,
+    'total_kelas' => $totalKelasResponse['success'] ? $totalKelasResponse['data'] : 0,  // Added total classes
+    'total_books' => $totalBooksResponse['success'] ? $totalBooksResponse['data'] : 0, // Added total books
 ];
 
+// Process invoices to calculate metrics
 if ($invoicesResponse['success'] && isset($invoicesResponse['data'])) {
     $payments = $invoicesResponse['data'];
 
@@ -119,11 +114,24 @@ if ($invoicesResponse['success'] && isset($invoicesResponse['data'])) {
         }
 
         .metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr); 
+        gap: 1.5rem;
+        margin-top: 2rem;
         }
+
+        @media (max-width: 768px) {
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
 
         .metric-card {
             background: white;
@@ -169,10 +177,17 @@ if ($invoicesResponse['success'] && isset($invoicesResponse['data'])) {
                     <div class="title">Total User</div>
                     <div class="value"><?php echo number_format($metrics['total_users']); ?></div>
                 </div>
+                <div class="metric-card">
+                    <div class="title">Total Kelas</div>
+                    <div class="value"><?php echo number_format($metrics['total_kelas']); ?></div>  <!-- Total Kelas -->
+                </div>
+                <div class="metric-card">
+                    <div class="title">Total Books</div>
+                    <div class="value"><?php echo number_format($metrics['total_books']); ?></div>  <!-- Total Books -->
+                </div>
             </div>
         </div>
     </div>
-
 
     <script>
         const modal = document.getElementById('updateInvoiceStatusModal');

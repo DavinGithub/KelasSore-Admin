@@ -68,6 +68,7 @@ if (isset($_GET['edit']) && is_numeric($_GET['edit'])) {
             <?php endif; ?>
 
             <div class="mentors-table">
+                <h1>Daftar Mentor</h1>
                 <table>
                     <thead>
                         <tr>

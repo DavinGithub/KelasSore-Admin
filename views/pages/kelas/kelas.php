@@ -107,15 +107,15 @@ $deals = $kelasController->getAllKelas();
     <title>Manajemen Kelas</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../../../assets/css/kelas/kelas.css">
-    <style>
-       
-    </style>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 </head>
 
 <body>
     <?php include '../../../views/layout/sidebar.php'; ?>
 
-    <div class="main-content">  
+    <div class="main-content">
         <div class="container">
             <?php if (isset($errorMessage)): ?>
                 <div class="error-message" style="color: red; margin-bottom: 15px;">
@@ -123,25 +123,24 @@ $deals = $kelasController->getAllKelas();
                 </div>
             <?php endif; ?>
 
-            <!-- Change the button to a regular link -->
-<div class="top-bar">
-    <h1>Kelas</h1>
-    <a href="tambahkelas.php" class="add-mentor-btn">
-        <i class="fas fa-plus"></i> Tambah Kelas
-    </a>
-</div>
+            <div class="top-bar">
+                <h1>Kelas</h1>
+                <a href="tambahkelas.php" class="add-mentor-btn">
+                    <i class="fas fa-plus"></i> Tambah Kelas
+                </a>
+            </div>
 
             <div class="deals-table">
                 <div class="deals-header">
                     <h2>Daftar Kelas</h2>
                 </div>
 
-                <table>
+                <table id="kelasTable" class="display">
                     <thead>
                         <tr>
                             <th>Nama Kelas</th>
                             <th>Nama Mentor</th>
-                            <th>Tanggal Dimulai</th>
+                            <th>Schedule</th>
                             <th>Kategori</th>
                             <th>Harga</th>
                             <th>Action</th>
@@ -149,7 +148,6 @@ $deals = $kelasController->getAllKelas();
                     </thead>
                     <tbody>
                         <?php foreach ($deals as $deal):
-                            // Prepare deal data for JavaScript
                             $dealData = array_merge($deal, [
                                 'book_ids' => $kelasController->getAllKelas($deal['id'])
                             ]);
@@ -164,7 +162,6 @@ $deals = $kelasController->getAllKelas();
                                 <td><?php echo htmlspecialchars($deal['schedule']); ?></td>
                                 <td><?php echo htmlspecialchars($deal['category']); ?></td>
                                 <td>Rp.<?php echo number_format($deal['price'], 2); ?></td>
-                                
                                 <td>
                                     <button onclick='openEditModal(<?php echo htmlspecialchars(json_encode($dealData)); ?>)' class="btn-primary">
                                         <i class="fas fa-edit"></i>
@@ -183,12 +180,17 @@ $deals = $kelasController->getAllKelas();
                 </table>
             </div>
 
-          
             <?php include 'updatekelas.php'; ?>
         </div>
     </div>
 
     <script>
+        $(document).ready(function () {
+            $('#kelasTable').DataTable({
+                "order": [[2, "desc"]] 
+            });
+        });
+
         const modal = document.getElementById('addKelasModal');
         const updateModal = document.getElementById('updateKelasModal');
         const openModalBtn = document.getElementById('openModalBtn');
@@ -213,7 +215,6 @@ $deals = $kelasController->getAllKelas();
                 updateModal.style.display = 'none';
             }
         }
-
     </script>
 </body>
 

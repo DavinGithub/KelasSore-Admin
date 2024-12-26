@@ -13,15 +13,17 @@
         }
 
         public function getAllKelas()
-        {
-            $query = "SELECT * FROM kelas";
-            $result = mysqli_query($this->conn, $query);
-            $kelasList = [];
-            while ($row = mysqli_fetch_assoc($result)) {
-                $kelasList[] = $row;
-            }
-            return $kelasList;
-        }
+{
+    $query = "SELECT * FROM kelas ORDER BY id DESC";
+    $result = mysqli_query($this->conn, $query);
+    $kelasList = [];
+    while ($row = mysqli_fetch_assoc($result)) {
+        $kelasList[] = $row;
+    }
+    return $kelasList;
+}
+
+
 
         public function getKelasById($kelasId)
         {
@@ -48,7 +50,7 @@
             // Bind parameters individually
             mysqli_stmt_bind_param(
                 $stmt,
-                "isssssssiiisssssssssss",  // Updated type definition
+                "isssssssiissssssssssss",  // Updated type definition
                 $mentor_id,  // This will be NULL if not provided
                 $data['name_mentor'],
                 $data['name'],

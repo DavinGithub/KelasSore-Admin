@@ -89,7 +89,20 @@ if ($invoiceId) {
             font-size: 1.1em;
         }
 
-      
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -105,6 +118,11 @@ if ($invoiceId) {
 
                 <div class="invoice-info-grid">
                     <!-- Display invoice details -->
+                    <div class="info-item">
+                        <div class="info-label">Nama User</div>
+                        <div class="info-value"><?php echo htmlspecialchars($invoice['user_name'] ?? 'N/A'); ?></div>
+                    </div>
+                    
                     <div class="info-item">
                         <div class="info-label">Status</div>
                         <div class="info-value"><?php echo htmlspecialchars($invoice['status']); ?></div>
@@ -146,6 +164,9 @@ if ($invoiceId) {
                         <div class="info-value"><?php echo htmlspecialchars($invoice['bank_name']); ?></div>
                     </div>
                 </div>
+
+                <!-- Back Button -->
+                <a href="pembayaran.php" class="back-button">Back</a>
             </div>
         </div>
     </div>

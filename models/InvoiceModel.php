@@ -14,7 +14,9 @@ class InvoiceModel
 
     public function getAllInvoices()
     {
-        $query = "SELECT * FROM invoices";
+        $query = "SELECT i.*, u.name as user_name 
+                FROM invoices i 
+                LEFT JOIN users u ON i.user_id = u.id";
         $result = mysqli_query($this->conn, $query);
         $invoicesList = [];
         while ($row = mysqli_fetch_assoc($result)) {
@@ -170,14 +172,17 @@ class InvoiceModel
     }
 
     public function getdetailinvoicesbyid($invoiceId)
-{
-    $query = "SELECT status, name, payment_price, nominal, no_rekening, image_pay, bank_name FROM invoices WHERE id = ?";
-    $stmt = mysqli_prepare($this->conn, $query);
-    mysqli_stmt_bind_param($stmt, "i", $invoiceId);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
-    return mysqli_fetch_assoc($result);
-}
+    {
+        $query = "SELECT i.status, i.name, i.payment_price, i.nominal, i.no_rekening, i.image_pay, i.bank_name, u.name as user_name 
+                  FROM invoices i 
+                  LEFT JOIN users u ON i.user_id = u.id 
+                  WHERE i.id = ?";
+        $stmt = mysqli_prepare($this->conn, $query);
+        mysqli_stmt_bind_param($stmt, "i", $invoiceId);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+        return mysqli_fetch_assoc($result);
+    }
 
 
 
