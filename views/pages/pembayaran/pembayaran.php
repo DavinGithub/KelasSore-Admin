@@ -46,6 +46,8 @@ if ($response['success'] && isset($response['data'])) {
     <title>Invoice User</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../../../assets/css/pembayaran/pembayaran.css">
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
     <style>
         .empty-state {
             text-align: center;
@@ -115,7 +117,7 @@ if ($response['success'] && isset($response['data'])) {
                     <p>Tidak ada data pembayaran yang tersedia saat ini.</p>
                 </div>
                 <?php else: ?>
-                <table>
+                <table id="invoiceTable">
                     <thead>
                         <tr>
                             <th>No</th>
@@ -134,23 +136,22 @@ if ($response['success'] && isset($response['data'])) {
                             <td><?php echo htmlspecialchars($payment['name'] ?? ''); ?></td>
                             <td><?php echo htmlspecialchars($payment['nominal'] ?? ''); ?></td>
                             <td><?php echo htmlspecialchars($payment['status'] ?? ''); ?></td>
-                                <td>
+                            <td>
                                 <div class="action-buttons">
-                                <a href="invoice-detail.php?id=<?php echo $payment['id']; ?>" class="btn btn-info">
-                                    <i class="fas fa-eye"></i> Detail
-                                </a>
-
-                                <a href="#" class="action-icon" onclick="openModal(
-                                    '<?php echo $payment['id']; ?>',
-                                    '<?php echo $payment['status'] ?? ''; ?>',
-                                    '<?php echo $payment['approval'] ?? ''; ?>'
-                                )">
-                                    <button class="btn-edit">
-                                        <i class="fas fa-edit"></i> Edit
-                                    </button>
-                                </a>
+                                    <a href="invoice-detail.php?id=<?php echo $payment['id']; ?>" class="btn btn-info">
+                                        <i class="fas fa-eye"></i> Detail
+                                    </a>
+                                    <a href="#" class="action-icon" onclick="openModal(
+                                        '<?php echo $payment['id']; ?>',
+                                        '<?php echo $payment['status'] ?? ''; ?>',
+                                        '<?php echo $payment['approval'] ?? ''; ?>'
+                                    )">
+                                        <button class="btn-edit">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </button>
+                                    </a>
                                 </div>
-                        </td>
+                            </td>
                         </tr>
                         <?php endforeach; ?>
                     </tbody>
@@ -190,7 +191,19 @@ if ($response['success'] && isset($response['data'])) {
         </div>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+
     <script>
+        $(document).ready(function() {
+            // Initialize DataTables
+            $('#invoiceTable').DataTable({
+                "paging": true,
+                "searching": true,
+                "ordering": true
+            });
+        });
+
         const modal = document.getElementById('updateInvoiceStatusModal');
         const invoiceIdInput = document.getElementById('invoiceId');
         const paymentStatusSelect = document.getElementById('paymentStatus');

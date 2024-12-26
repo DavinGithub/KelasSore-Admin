@@ -41,9 +41,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Location: kelas.php');
         exit();
     } else {
-        // Optionally log the error for debugging purposes (no output to the user)
-        // error_log("Error: " . $result);
-        // Redirect to kelas.php if there's an error
         header('Location: kelas.php');
         exit();
     }
@@ -105,55 +102,74 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             color: #555;
         }
 
+        /* Form actions container */
         .form-actions {
             display: flex;
-            justify-content: flex-end; /* Change from center to flex-end */
-            gap: 15px;
-            margin-bottom: 20px;
+            justify-content: flex-end;
+            gap: 16px;
+            margin-top: 30px;
+            padding: 20px;
         }
 
-        .btn-primary,
-        .btn-secondary {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
+        /* Base button styles */
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 28px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 15px;
             cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            border: none;
+            min-width: 140px;
         }
 
-        .btn-primary {
-            background-color: #007BFF;
-            color: white;
-            transition: background-color 0.3s;
+        /* Primary button (Tambah) */
+        .button-primary {
+            background: linear-gradient(to right, #2563eb, #1d4ed8);
+            color: #ffffff;
+            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
         }
 
-        .btn-primary:hover {
-            background-color: #0056b3;
+        .button-primary:hover {
+            background: linear-gradient(to right, #1d4ed8, #1e40af);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px -1px rgba(37, 99, 235, 0.3);
         }
 
-        .btn-secondary {
-            background-color: #6C757D;
-            color: white;
-            transition: background-color 0.3s;
+        .button-primary:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px -1px rgba(37, 99, 235, 0.2);
         }
 
-        .btn-secondary:hover {
-            background-color: #5a6268;
+        /* Secondary button (Batal) */
+        .button-secondary {
+            background: #ffffff;
+            color: #4b5563;
+            border: 2px solid #e5e7eb;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
 
-        .form-group input[type="file"] {
-            padding: 5px;
+        .button-secondary:hover {
+            background: #f9fafb;
+            border-color: #d1d5db;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
         }
 
-        .form-group select[multiple] {
-            height: auto;
+        .button-secondary:active {
+            transform: translateY(0);
+            background: #f3f4f6;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
 
         .form-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 20px; /* Jarak antar elemen */
+            gap: 20px;
             margin-bottom: 20px;
         }
 
@@ -168,7 +184,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <div class="main-content">
         <div class="container">
-            <!-- Removed error message section -->
             <div class="form-container">
                 <h1>Tambah Kelas</h1>
                 <form action="" method="post" enctype="multipart/form-data">
@@ -279,18 +294,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <?php endforeach; ?>
                             </select>
                         </div>
+                    </div>
 
-                        <fieldset class="form-group">
-                            <legend>Apa yang Akan Dipelajari:</legend>
-                            <input type="text" name="what_will_learn_1" placeholder="Topik 1" required>
-                            <input type="text" name="what_will_learn_2" placeholder="Topik 2" required>
-                            <input type="text" name="what_will_learn_3" placeholder="Topik 3" required>
-                        </fieldset>
+                    <fieldset class="form-group">
+                        <legend>Apa yang Akan Dipelajari:</legend>
+                        <input type="text" name="what_will_learn_1" placeholder="Topik 1" required>
+                        <input type="text" name="what_will_learn_2" placeholder="Topik 2" required>
+                        <input type="text" name="what_will_learn_3" placeholder="Topik 3" required>
+                    </fieldset>
 
-                        <div class="form-actions">
-                            <button type="submit" class="btn-primary">Tambah Kelas</button>
-                            <a href="kelas.php" class="btn-secondary">Batal</a>
-                        </div>
+                    <div class="form-actions">
+                        <button type="submit" class="button button-primary">Tambah Kelas</button>
+                        <a href="kelas.php" class="button button-secondary">Batal</a>
                     </div>
                 </form>
             </div>
@@ -304,7 +319,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             const selectedMentorId = this.value;
             const mentorNameField = document.getElementById('name_mentor');
             const selectedMentor = mentors.find(mentor => mentor.id == selectedMentorId);
-            mentorNameField.value   = selectedMentor ? selectedMentor.name : '';
+            mentorNameField.value = selectedMentor ? selectedMentor.name : '';
         });
     </script>
 </body>
