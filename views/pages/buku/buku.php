@@ -49,6 +49,7 @@ $books = $bookController->getAllBooks();
     <title>Buku</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../../../assets/css/buku/buku.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
     <style>
         /* Modal Styles */
         .modal {
@@ -151,7 +152,7 @@ $books = $bookController->getAllBooks();
                     <h2>Buku Details</h2>
                 </div>
 
-                <table>
+                <table id="booksTable">
                     <thead>
                         <tr>
                             <th>Buku</th>
@@ -282,7 +283,13 @@ $books = $bookController->getAllBooks();
         </div>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <script>
+        $(document).ready(function() {
+            $('#booksTable').DataTable(); // Initialize DataTable
+        });
+
         function openAddModal() {
             document.getElementById('addBookModal').style.display = 'block';
         }

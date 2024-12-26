@@ -48,6 +48,9 @@ if (isset($_GET['edit']) && is_numeric($_GET['edit'])) {
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../../../assets/css/mentor/mainmentor.css">
     <link rel="stylesheet" href="../../../assets/css/mentor/mentormodal.css">
+
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
 </head>
 <body>
     <?php include '../../../views/layout/sidebar.php'; ?>
@@ -69,7 +72,7 @@ if (isset($_GET['edit']) && is_numeric($_GET['edit'])) {
 
             <div class="mentors-table">
                 <h1>Daftar Mentor</h1>
-                <table>
+                <table id="mentorsTable" class="display">
                     <thead>
                         <tr>
                             <th>Nama Mentor</th>
@@ -182,7 +185,14 @@ if (isset($_GET['edit']) && is_numeric($_GET['edit'])) {
         </div>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+
     <script>
+        $(document).ready(function() {
+            $('#mentorsTable').DataTable(); // Initialize DataTable
+        });
+
         const modal = document.getElementById('addMentorModal');
         const addMentorButton = document.querySelector('.add-mentor-btn');
 
