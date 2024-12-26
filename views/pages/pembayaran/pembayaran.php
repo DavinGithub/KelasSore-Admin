@@ -30,12 +30,11 @@ $payments = [];
 
 if ($response['success'] && isset($response['data'])) {
     $payments = $response['data'];
-   
-    foreach ($payments as $payment) {
-        if (isset($payment['status']) && $payment['status'] === 'menunggu pembayaran') {
-            $metrics['total_pending']++;
-        }
-    }
+
+    // Urutkan data berdasarkan waktu terbaru
+    usort($payments, function ($a, $b) {
+        return strtotime($b['created_at']) - strtotime($a['created_at']);
+    });
 }
 ?>
 
@@ -120,8 +119,8 @@ if ($response['success'] && isset($response['data'])) {
                     <thead>
                         <tr>
                             <th>No</th>
-                          
-                            <th>Name Kelas</th>
+                            <th>Nama User</th>
+                            <th>Nama Kelas</th>
                             <th>Nominal</th>
                             <th>Status Pembayaran</th>
                             <th>Action</th>
@@ -131,6 +130,7 @@ if ($response['success'] && isset($response['data'])) {
                         <?php $no = 1; foreach ($payments as $payment): ?>
                         <tr>
                             <td><?php echo $no++; ?></td>
+                            <td><?php echo htmlspecialchars($payment['user_name'] ?? ''); ?></td>
                             <td><?php echo htmlspecialchars($payment['name'] ?? ''); ?></td>
                             <td><?php echo htmlspecialchars($payment['nominal'] ?? ''); ?></td>
                             <td><?php echo htmlspecialchars($payment['status'] ?? ''); ?></td>
@@ -140,15 +140,15 @@ if ($response['success'] && isset($response['data'])) {
                                     <i class="fas fa-eye"></i> Detail
                                 </a>
 
-                            <a href="#" class="action-icon" onclick="openModal(
-                                '<?php echo $payment['id']; ?>',
-                                '<?php echo $payment['status'] ?? ''; ?>',
-                                '<?php echo $payment['approval'] ?? ''; ?>'
-                            )">
-                                <button class="btn-edit">
-                                    <i class="fas fa-edit"></i> Edit
-                                </button>
-                            </a>
+                                <a href="#" class="action-icon" onclick="openModal(
+                                    '<?php echo $payment['id']; ?>',
+                                    '<?php echo $payment['status'] ?? ''; ?>',
+                                    '<?php echo $payment['approval'] ?? ''; ?>'
+                                )">
+                                    <button class="btn-edit">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </button>
+                                </a>
                                 </div>
                         </td>
                         </tr>
