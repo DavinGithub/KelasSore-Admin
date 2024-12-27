@@ -11,6 +11,19 @@ if (!empty($artikels)) {
     });
 }
 
+// Handle DELETE request
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'delete') {
+    $artikelId = $_POST['id'];
+    $result = $artikelController->deleteArtikel($artikelId);
+    
+    if ($result) {
+        echo json_encode(['success' => true]);
+    } else {
+        echo json_encode(['success' => false, 'error' => 'Failed to delete artikel']);
+    }
+    exit;
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = $_POST['title'];
     $subtitle = $_POST['subtitle'];
@@ -55,17 +68,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .btn-add {
-            background-color: #4CAF50;
+            background-color: #4f46e5;
             color: white;
             padding: 10px 15px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
+            text-decoration: none;
         }
 
         .btn-add:hover {
-            background-color: #45a049;
+            background-color:rgb(8, 0, 155);
         }
 
         .text-ellipsis {
@@ -73,6 +87,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             overflow: hidden;
             text-overflow: ellipsis;
             max-width: 150px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+
+        .btn-delete {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .btn-delete:hover {
+            background-color: #c82333;
+        }
+
+        .btn-delete i {
+            margin-right: 5px;
         }
     </style>
 </head>
@@ -88,7 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="deals-table">
                 <div class="deals-header">
                     <h2>Artikel Management</h2>
-                    <button class="btn-add" onclick="openAddArtikelModal()">+ Add Artikel</button>
+                    <a href="addartikel.php" class="btn-add">+ Add Artikel</a>
                 </div>
 
                 <div id="tableContainer">
@@ -102,10 +141,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <thead>
                                 <tr>
                                     <th>No</th>
+                                    <th>Image</th>
                                     <th>Title</th>
                                     <th>Subtitle</th>
-                                    <th>Image</th>
-                                    <th>Content</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -113,18 +151,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <?php $no = 1; foreach ($artikels as $artikel): ?>
                                     <tr>
                                         <td><?php echo $no++; ?></td>
-                                        <td class="text-ellipsis"><?php echo htmlspecialchars($artikel['title']); ?></td>
-                                        <td class="text-ellipsis"><?php echo htmlspecialchars($artikel['subtitle']); ?></td>
                                         <td>
                                             <img src="../../../assets/images/artikels/<?php echo htmlspecialchars($artikel['image']); ?>" 
                                                  alt="<?php echo htmlspecialchars($artikel['title']); ?>"
                                                  class="artikel-image">
                                         </td>
-                                        <td>
-                                            <div class="content-preview">
-                                                <?php echo htmlspecialchars($artikel['content']); ?>
-                                            </div>
-                                        </td>
+                                        <td class="text-ellipsis"><?php echo htmlspecialchars($artikel['title']); ?></td>
+                                        <td class="text-ellipsis"><?php echo htmlspecialchars($artikel['subtitle']); ?></td>
                                         <td>
                                             <div class="action-buttons">
                                                 <a href="artikel-detail.php?id=<?php echo $artikel['id']; ?>" class="btn btn-info">
@@ -133,6 +166,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                                 <a href="artikel-edit.php?id=<?php echo $artikel['id']; ?>" class="btn-edit">
                                                     <i class="fas fa-edit"></i> Edit
                                                 </a>
+                                                <button type="button" class="btn-delete" onclick="deleteArtikel(<?php echo $artikel['id']; ?>)">
+                                                    <i class="fas fa-trash"></i> Delete
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
@@ -148,133 +184,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
     <script>
-        let dataTable;
-
         $(document).ready(function() {
-            initializeDataTable();
+            $('#artikelTable').DataTable();
         });
 
-        function initializeDataTable() {
-            if ($.fn.DataTable.isDataTable('#artikelTable')) {
-                $('#artikelTable').DataTable().destroy();
-            }
-            dataTable = $('#artikelTable').DataTable();
-        }
-
-        function updateTable(data) {
-            // Destroy existing DataTable
-            if ($.fn.DataTable.isDataTable('#artikelTable')) {
-                $('#artikelTable').DataTable().destroy();
-            }
-
-            let tableHtml = `
-                <table id="artikelTable">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Title</th>
-                            <th>Subtitle</th>
-                            <th>Image</th>
-                            <th>Content</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>`;
-
-            data.forEach((artikel, index) => {
-                tableHtml += `
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td class="text-ellipsis">${artikel.title}</td>
-                        <td class="text-ellipsis">${artikel.subtitle}</td>
-                        <td>
-                            <img src="../../../assets/images/artikels/${artikel.image}" 
-                                 alt="${artikel.title}"
-                                 class="artikel-image">
-                        </td>
-                        <td>
-                            <div class="content-preview">
-                                ${artikel.content}
-                            </div>
-                        </td>
-                        <td>
-                            <div class="action-buttons">
-                                <a href="artikel-detail.php?id=${artikel.id}" class="btn btn-info">
-                                    <i class="fas fa-eye"></i> Detail
-                                </a>
-                                <a href="artikel-edit.php?id=${artikel.id}" class="btn-edit">
-                                    <i class="fas fa-edit"></i> Edit
-                                </a>
-                            </div>
-                        </td>
-                    </tr>`;
-            });
-
-            tableHtml += `
-                    </tbody>
-                </table>`;
-
-            document.getElementById('tableContainer').innerHTML = tableHtml;
-            initializeDataTable();
-        }
-
-        function openAddArtikelModal() {
-            fetch('addartikel.php')
-                .then(response => response.text())
-                .then(data => {
-                    const modalContainer = document.createElement('div');
-                    modalContainer.innerHTML = data;
-                    document.body.appendChild(modalContainer);
-
-                    const modal = document.getElementById('addArtikelModal');
-                    modal.style.display = 'flex';
-
-                    const closeModal = document.getElementById('closeModal');
-                    const cancelBtn = document.getElementById('cancelBtn');
-                    const addArtikelForm = document.getElementById('addArtikelForm');
-
-                    closeModal.onclick = () => {
-                        modal.style.display = 'none';
-                        modalContainer.remove();
-                    };
-
-                    cancelBtn.onclick = () => {
-                        modal.style.display = 'none';
-                        modalContainer.remove();
-                    };
-
-                    window.onclick = (event) => {
-                        if (event.target === modal) {
-                            modal.style.display = 'none';
-                            modalContainer.remove();
+        function deleteArtikel(id) {
+            if (confirm('Are you sure you want to delete this artikel?')) {
+                $.ajax({
+                    url: window.location.href,
+                    type: 'POST',
+                    data: {
+                        action: 'delete',
+                        id: id
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            location.reload();
+                        } else {
+                            alert('Failed to delete artikel: ' + response.error);
                         }
-                    };
-
-                    addArtikelForm.onsubmit = function(event) {
-                        event.preventDefault();
-                        const formData = new FormData(addArtikelForm);
-
-                        fetch('artikel.php', {
-                            method: 'POST',
-                            body: formData
-                        })
-                        .then(response => response.json())
-                        .then(result => {
-                            if (result.success) {
-                                alert('Artikel berhasil ditambahkan!');
-                                updateTable(result.data); // Update table with new data
-                                modal.style.display = 'none';
-                                modalContainer.remove();
-                            } else {
-                                alert('Terjadi kesalahan: ' + result.error);
-                            }
-                        })
-                        .catch(error => {
-                            alert('Error: ' + error);
-                        });
-                    };
-                })
-                .catch(error => console.error('Error loading modal:', error));
+                    },
+                    error: function() {
+                        alert('An error occurred while trying to delete the artikel');
+                    }
+                });
+            }
         }
     </script>
 </body>

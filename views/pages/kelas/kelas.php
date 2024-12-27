@@ -125,7 +125,7 @@ $deals = $kelasController->getAllKelas();
 
             <div class="top-bar">
                 <h1>Kelas</h1>
-                <a href="tambahkelas.php" class="add-mentor-btn">
+                <a href="tambahkelas.php" class="add-kelas-btn">
                     <i class="fas fa-plus"></i> Tambah Kelas
                 </a>
             </div>
