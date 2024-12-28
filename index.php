@@ -1,6 +1,5 @@
 <?php
 
-
 if (!isset($_SESSION['admin_id'])) {
     $page = 'login';
 } else {
@@ -15,9 +14,9 @@ $allowedPages = [
     'kelas' => 'views/pages/kelas/kelas.php',
 ];
 
-
+// Tambahkan prefix "/admin" pada rute
 if (array_key_exists($page, $allowedPages)) {
-    include $allowedPages[$page];
+    include '/admin/' . $allowedPages[$page];
 } else {
     echo "404 - Page not found!";
 }
