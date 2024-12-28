@@ -8,11 +8,11 @@ if (!isset($_SESSION['admin_id'])) {
 }
 
 $allowedPages = [
-    'login' => 'views/pages/login/login.php',
-    'dashboard' => 'views/pages/dashboard/dashboard.php',
-    'buku' => 'views/pages/buku/buku.php',
-    'mentor' => 'views/pages/mentor/mentor.php',
-    'kelas' => 'views/pages/kelas/kelas.php',
+    'login' => 'admin/views/pages/login/login.php',
+    'dashboard' => 'admin/views/pages/dashboard/dashboard.php',
+    'buku' => 'admin/views/pages/buku/buku.php',
+    'mentor' => 'admin/views/pages/mentor/mentor.php',
+    'kelas' => 'admin/views/pages/kelas/kelas.php',
 ];
 
 

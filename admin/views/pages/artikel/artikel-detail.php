@@ -30,6 +30,8 @@ if ($artikelId) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detail Artikel</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Include TinyMCE script -->
+    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
     <style>
         /* Global reset and font */
         * {
@@ -45,7 +47,6 @@ if ($artikelId) {
             color: #333;
         }
 
-        /* Sidebar styling (add this if needed) */
         .main-content {
             margin-left: 250px;
             transition: margin-left 0.3s;
@@ -53,7 +54,6 @@ if ($artikelId) {
             padding: 20px;
         }
 
-        /* Main container styling */
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -61,7 +61,6 @@ if ($artikelId) {
             width: 100%;
         }
 
-        /* Artikel detail styling */
         .artikel-detail-container {
             padding: 30px;
             background: white;
@@ -70,7 +69,6 @@ if ($artikelId) {
             margin-top: 30px;
         }
 
-        /* Artikel header styling */
         .artikel-header {
             display: flex;
             align-items: center;
@@ -85,35 +83,18 @@ if ($artikelId) {
             font-weight: bold;
         }
 
-                /* Styling untuk title, subtitle, dan content agar teks panjang dibungkus */
-        /* Styling untuk title, subtitle, dan content agar teks panjang dibungkus */
-        .info-value {
-            word-wrap: break-word;  /* Memaksa kata panjang terputus */
-            overflow-wrap: break-word; /* Membungkus kata yang panjang */
-            word-break: break-word;   /* Memecah kata panjang agar tidak keluar dari container */
-            line-height: 1.6;         /* Agar teks terlihat lebih rapi */
-            word-break: break-word;   /* Untuk memastikan kata panjang terputus pada batas */
-        }
-
-        .info-item {
-            overflow: hidden;         /* Menghindari overflow di dalam kontainer */
-        }
-
-
-        /* Artikel content grid layout */
         .artikel-content {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
             margin-top: 20px;
         }
 
-        /* Information item styling */
         .info-item {
             padding: 20px;
             background: #f9fafb;
             border-radius: 8px;
             border: 1px solid #e0e0e0;
+            margin-bottom: 20px;
+            word-wrap: break-word;  /* This ensures text wraps within the container */
+            overflow: hidden; /* Prevents content from overflowing */
         }
 
         .info-label {
@@ -128,7 +109,6 @@ if ($artikelId) {
             line-height: 1.6;
         }
 
-        /* Image styling */
         .artikel-image {
             max-width: 100%;
             height: auto;
@@ -136,7 +116,6 @@ if ($artikelId) {
             margin-top: 15px;
         }
 
-        /* Back button styling */
         .back-button {
             display: inline-block;
             margin-top: 30px;
@@ -154,13 +133,24 @@ if ($artikelId) {
             background-color: #0056b3;
         }
 
-        /* Content text styling */
         .content-text {
             white-space: pre-line;
             text-align: justify;
         }
 
-        /* Responsive design */
+        /* To ensure that content inside 'info-item' stays within bounds */
+        .info-item img {
+            width: 25%; 
+            height: auto;
+            margin-top: 15px;
+        }
+
+        .info-item .info-value {
+            display: block;
+            clear: both;
+        }
+
+        /* Responsive design for smaller screens */
         @media screen and (max-width: 768px) {
             .main-content {
                 margin-left: 0;
@@ -174,6 +164,11 @@ if ($artikelId) {
 
             .artikel-header h1 {
                 font-size: 1.5em;
+            }
+
+            /* Stacking content vertically for small screens */
+            .artikel-content .info-item {
+                margin-bottom: 10px;
             }
         }
     </style>
@@ -189,7 +184,7 @@ if ($artikelId) {
                 </div>
 
                 <div class="artikel-content">
-                <div class="info-item">
+                    <div class="info-item">
                         <div class="info-label">Image</div>
                         <div class="info-value">
                             <?php if (!empty($artikel['image'])): ?>
@@ -212,13 +207,13 @@ if ($artikelId) {
                         <div class="info-value"><?php echo htmlspecialchars($artikel['subtitle']); ?></div>
                     </div>
 
-                  
                     <div class="info-item">
                         <div class="info-label">Content</div>
-                        <div class="info-value">
-                            <?php echo nl2br(htmlspecialchars($artikel['content'])); ?>
+                        <div class="info-value content-text">
+                            <?php echo $artikel['content']; ?>
                         </div>
                     </div>
+
                 </div>
 
                 <a href="artikel.php" class="back-button">
@@ -227,5 +222,16 @@ if ($artikelId) {
             </div>
         </div>
     </div>
+
+    <!-- TinyMCE initialization -->
+    <script>
+        tinymce.init({
+            selector: '#content',  // Applies TinyMCE to the textarea with id 'content'
+            plugins: 'a11ychecker advlist anchor autolink codesample link lists media searchreplace table wordcount',
+            toolbar: 'undo redo | bold italic underline | link image | alignleft aligncenter alignright | bullist numlist outdent indent',
+            height: 400,  // Set the height of the editor
+            branding: false,  // Disable TinyMCE branding
+        });
+    </script>
 </body>
 </html>
