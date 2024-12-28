@@ -3,7 +3,7 @@
 session_start();
 
 if (isset($_SESSION['admin_id'])) {
-    header('Location: /views/pages/dashboard/dashboard.php');
+    header('Location: admin/views/pages/dashboard/dashboard.php');
     exit();
 }
 
@@ -183,7 +183,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                     <div class="row text-center">
                         <p class="text-muted mb-0">Don't have an account? 
-                            <a href="views/pages/register/register.php" class="text-primary fw-bold">Sign Up</a>
+                            <a href="admin/views/pages/register/register.php" class="text-primary fw-bold">Sign Up</a>
                         </p>
                     </div>
                 </div>

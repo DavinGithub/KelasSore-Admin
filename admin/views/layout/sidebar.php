@@ -16,12 +16,12 @@ if (!function_exists('isActive')) {
 }
 
 $navItems = [
-    ['icon' => 'fa-th-large', 'text' => 'Dashboard', 'url' => '/views/pages/dashboard/dashboard.php'],
-    ['icon' => 'fa-th-large', 'text' => 'Pembayaran', 'url' => '/views/pages/pembayaran/pembayaran.php'],
-    ['icon' => 'fa-chalkboard-teacher', 'text' => 'Mentor', 'url' => '/views/pages/mentor/mentor.php'],
-    ['icon' => 'fa-graduation-cap', 'text' => 'Kelas', 'url' => '/views/pages/kelas/kelas.php'],
-    ['icon' => 'fa-book', 'text' => 'Buku', 'url' => '/views/pages/buku/buku.php'],
-    ['icon' => 'fa-th-large', 'text' => 'Artikel', 'url' => '/views/pages/artikel/artikel.php'],
+    ['icon' => 'fa-th-large', 'text' => 'Dashboard', 'url' => '/admin/views/pages/dashboard/dashboard.php'],
+    ['icon' => 'fa-th-large', 'text' => 'Pembayaran', 'url' => '/admin/views/pages/pembayaran/pembayaran.php'],
+    ['icon' => 'fa-chalkboard-teacher', 'text' => 'Mentor', 'url' => '/admin/views/pages/mentor/mentor.php'],
+    ['icon' => 'fa-graduation-cap', 'text' => 'Kelas', 'url' => '/admin/views/pages/kelas/kelas.php'],
+    ['icon' => 'fa-book', 'text' => 'Buku', 'url' => '/admin/views/pages/buku/buku.php'],
+    ['icon' => 'fa-th-large', 'text' => 'Artikel', 'url' => '/admin/views/pages/artikel/artikel.php'],
 ];
 ?>
 
