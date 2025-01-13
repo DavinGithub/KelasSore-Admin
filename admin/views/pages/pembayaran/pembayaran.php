@@ -25,6 +25,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     }
 }
 
+session_start();
+if (!isset($_SESSION['admin_id'])) {
+    header('Location: ../../../views/pages/login/login.php');
+    exit();
+}
+
 $response = json_decode($invoicesController->getAllInvoices(), true);
 $payments = [];
 
@@ -317,7 +323,7 @@ if ($response['success'] && isset($response['data'])) {
                             <td>
                                 <span class="status-badge <?php 
                                     echo match($payment['status']) {
-                                        'menunggu pembayaran' => 'status-waiting',
+                                        'menunggu konfirmasi' => 'status-waiting',
                                         'terbayar' => 'status-paid',
                                         'gagal' => 'status-failed',
                                         default => ''

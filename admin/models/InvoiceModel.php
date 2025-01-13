@@ -23,6 +23,28 @@ class InvoiceModel
             $invoicesList[] = $row;
         }
         return $invoicesList;
+    } 
+
+    public function getMonthlyOrders() {
+        $query = "SELECT 
+            MONTH(created_at) as month,
+            COUNT(*) as total_orders
+            FROM invoices
+            WHERE YEAR(created_at) = YEAR(CURRENT_DATE())
+            GROUP BY MONTH(created_at)
+            ORDER BY month";
+        
+        $result = mysqli_query($this->conn, $query);
+        
+        // Initialize array with zeros for all months
+        $monthlyOrders = array_fill(1, 12, 0);
+        
+        // Fill in actual values
+        while ($row = mysqli_fetch_assoc($result)) {
+            $monthlyOrders[$row['month']] = (int)$row['total_orders'];
+        }
+        
+        return array_values($monthlyOrders);
     }
 
     public function getInvoiceById($invoiceId)

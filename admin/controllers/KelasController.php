@@ -49,10 +49,8 @@ class KelasController
         $data['created_at'] = $createdAt;
         $data['updated_at'] = $updatedAt;
 
-        // Ensure mentor_id is properly handled (set to NULL if empty)
         $data['mentor_id'] = isset($data['mentor_id']) && !empty($data['mentor_id']) ? $data['mentor_id'] : NULL;
 
-        // Handle start_date and end_date similar to updateKelas
         foreach (['start_date', 'end_date'] as $dateField) {
             if (!empty($data[$dateField])) {
                 $data[$dateField] = date('Y-m-d', strtotime($data[$dateField]));

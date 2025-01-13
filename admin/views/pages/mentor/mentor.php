@@ -37,6 +37,13 @@ $editMentor = null;
 if (isset($_GET['edit']) && is_numeric($_GET['edit'])) {
     $editMentor = $mentorController->getMentorById($_GET['edit']);
 }
+
+session_start();    
+if (!isset($_SESSION['admin_id'])) {
+    header('Location: ../../../views/pages/login/login.php');
+    exit();
+}
+    
 ?>
 
 <!DOCTYPE html>

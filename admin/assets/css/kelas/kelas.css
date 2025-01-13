@@ -177,19 +177,27 @@ th {
     color: black;
 }
 
-.btn-primary {
-    background-color: #007bff;
-    color: white;
-    padding: 6px 12px;
-    border-radius: 4px;
+.btn-primary, .delete-btn {
+    padding: 10px 20px;  /* Samakan padding */
+    font-size: 16px;  /* Samakan ukuran font */
     border: none;
+    border-radius: 4px;
     cursor: pointer;
-    
+    display: inline-block;  /* Menjadikan tombol berada di dalam baris yang sama */
+    text-decoration: none;  /* Menghapus underline pada link */
+    text-align: center;
 }
 
-.btn-primary:hover {
-    background-color: #0056b3;
+.delete-btn {
+    background-color: #f44336;  /* Warna background untuk delete */
+    color: white;
 }
+
+.btn-primary {
+    background-color: #4CAF50;  /* Warna background untuk update */
+    color: white;
+}
+
 
 /* Menghilangkan background abu-abu pada modal */
 .modal {

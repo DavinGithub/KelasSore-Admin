@@ -33,9 +33,9 @@ class AuthController {
     }
 
     public function logout() {
-        session_start(); // Pastikan session dimulai
-        session_destroy(); // Menghancurkan session untuk logout
-        header('Location: ../views/pages/login/login.php'); // Redirect ke halaman login
+        session_start();
+        session_destroy();
+        header('Location: /admin/views/pages/login/login.php');
         exit();
     }
 
@@ -59,5 +59,15 @@ class AuthController {
             }
         }
     }
+    public function handleAction() {
+        if (isset($_GET['action'])) {
+            switch ($_GET['action']) {
+                case 'logout':
+                    $this->logout();
+                    break;
+            }
+        }
+    }
 }
+
 ?>

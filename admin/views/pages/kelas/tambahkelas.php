@@ -45,6 +45,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 }
+
+session_start();
+if (!isset($_SESSION['admin_id'])) {
+    header('Location: ../../../views/pages/login/login.php');
+    exit();
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -224,9 +231,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
 
                         <div class="form-group">
-                            <label for="kurikulum">Kurikulum:</label>
-                            <input type="text" name="kurikulum" required>
-                        </div>
+                            <label for="kurikulum">Deskripsi 2:</label>
+                            <textarea name="kurikulum" rows="2" required></textarea>                       
+                         </div>
 
                         <div class="form-group">
                             <label for="price">Harga:</label>
@@ -297,11 +304,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
 
                     <fieldset class="form-group">
-                        <legend>Apa yang Akan Dipelajari:</legend>
-                        <input type="text" name="what_will_learn_1" placeholder="Topik 1" required>
-                        <input type="text" name="what_will_learn_2" placeholder="Topik 2" required>
-                        <input type="text" name="what_will_learn_3" placeholder="Topik 3" required>
+                        <legend>Kurikulum</legend>
+                        <textarea name="what_will_learn_1" placeholder="Kurikulum 1" required style="margin-bottom: 10px;"></textarea>
+                        <textarea name="what_will_learn_2" placeholder="Kurikulum 2" required style="margin-bottom: 10px;"></textarea>
+                        <textarea name="what_will_learn_3" placeholder="Kurikulum 3" required style="margin-bottom: 10px;"></textarea>
                     </fieldset>
+
+
 
                     <div class="form-actions">
                         <button type="submit" class="button button-primary">Tambah Kelas</button>

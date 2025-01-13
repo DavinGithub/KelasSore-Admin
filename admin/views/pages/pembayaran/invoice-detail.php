@@ -38,6 +38,13 @@ if ($invoiceId) {
     echo "Invalid invoice ID.";
     exit;
 }
+
+session_start();
+if (!isset($_SESSION['admin_id'])) {
+    header('Location: ../../../views/pages/login/login.php');
+    exit();
+}
+
 ?>
 
 <!DOCTYPE html>

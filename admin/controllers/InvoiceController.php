@@ -1,5 +1,4 @@
 <?php
-// File: controllers/InvoicesController.php
 require_once dirname(__FILE__) . '/../models/InvoiceModel.php';
 
 class InvoicesController
@@ -11,7 +10,6 @@ class InvoicesController
         $this->invoiceModel = new InvoiceModel(); 
     }
 
-    // Create new invoice
     public function createInvoice($data)
     {
         $insertResult = $this->invoiceModel->insertInvoice($data);
@@ -22,14 +20,12 @@ class InvoicesController
         }
     }
 
-    // Read all invoices
     public function getAllInvoices()
     {
         $invoices = $this->invoiceModel->getAllInvoices();
         return json_encode(['success' => true, 'data' => $invoices]);
     }
 
-    // Read a specific invoice by ID
     public function updateInvoiceStatus($invoiceId, $status) {
         $data = ['status' => $status];
         $updateResult = $this->invoiceModel->updateInvoice($invoiceId, $data);
@@ -40,7 +36,6 @@ class InvoicesController
         }
     }
 
-    // Update an existing invoice
     public function updateInvoice($invoiceId, $data)
     {
         $updateResult = $this->invoiceModel->updateInvoice($invoiceId, $data);
@@ -50,8 +45,12 @@ class InvoicesController
             return json_encode(['success' => false, 'message' => 'Failed to update invoice']);
         }
     }
-
-    // Delete an invoice by ID
+    
+    public function getMonthlyOrders() {
+        $monthlyOrders = $this->invoiceModel->getMonthlyOrders();
+        return json_encode(['success' => true, 'data' => $monthlyOrders]);
+    }
+    
     public function deleteInvoice($invoiceId)
     {
         $deleteResult = $this->invoiceModel->deleteInvoice($invoiceId);
