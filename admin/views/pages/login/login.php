@@ -3,7 +3,7 @@
 session_start();
 
 if (isset($_SESSION['admin_id'])) {
-    header('Location: admin/views/pages/dashboard/dashboard.php');
+    header('Location: /admin/views/pages/dashboard/dashboard.php');
     exit();
 }
 
@@ -12,6 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $authController = new AuthController();
     $message = $authController->handleLoginForm($_POST['email'], $_POST['password']);
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -21,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - KelasSore</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
+  
     <style>
         body {
             font-family: 'Manrope', sans-serif;
@@ -128,7 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="row border rounded-5 p-3 bg-white shadow box-area">
             <div class="col-md-6 rounded-4 d-flex justify-content-center align-items-center flex-column left-box">
                 <div class="featured-image mb-3">
-                    <img src="../../../assets/images/login.svg" class="img-fluid" style="width: 250px; height: 350px;" alt="Featured Image">
+                    <img src="/../../../assets/images/login.svg" class="img-fluid" style="width: 250px; height: 350px;" alt="Featured Image">
                 </div>
                 <p class="text-white fs-2 mb-2" style="font-weight: 600;">Welcome Back!</p>
                 <p class="text-white-50 text-center mb-2">Sign in to continue your learning journey</p>
@@ -165,9 +166,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <input type="checkbox" class="form-check-input" id="remember" name="remember_me">
                                 <label class="form-check-label text-secondary" for="remember">Remember Me</label>
                             </div>
-                            <div class="forgot">
-                                <a href="#" class="text-primary">Forgot Password?</a>
-                            </div>
+                          
                         </div>
                         <div class="input-group mb-4">
                             <button type="submit" class="btn btn-lg btn-primary w-100 fs-6">
@@ -175,22 +174,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             </button>
                         </div>
                     </form>
-                    <div class="input-group mb-4">
-                        <button class="btn btn-lg btn-light w-100 fs-6 d-flex align-items-center justify-content-center gap-2">
-                            <img src="../../../assets/images/google.svg" style="width:24px" alt="Google Logo">
-                            Sign In with Google
-                        </button>
-                    </div>
-                    <div class="row text-center">
-                        <p class="text-muted mb-0">Don't have an account? 
-                            <a href="admin/views/pages/register/register.php" class="text-primary fw-bold">Sign Up</a>
-                        </p>
-                    </div>
                 </div>
             </div>
         </div>
     </div>
-
     <script>
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             const submitBtn = this.querySelector('button[type="submit"]');

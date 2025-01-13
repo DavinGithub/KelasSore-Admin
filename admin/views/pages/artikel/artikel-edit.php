@@ -19,6 +19,13 @@ if (!$artikel) {
     exit;
 }
 
+session_start();
+if (!isset($_SESSION['admin_id'])) {
+    header('Location: ../../../views/pages/login/login.php');
+    exit();
+}
+
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = $_POST['title'] ?? null;
     $subtitle = $_POST['subtitle'] ?? null;

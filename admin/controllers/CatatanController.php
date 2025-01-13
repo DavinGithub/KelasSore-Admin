@@ -1,6 +1,4 @@
 <?php
-// File: controllers/CatatanController.php
-
 require_once dirname(__FILE__) . '/../models/CatatanModel.php';
 
 class CatatanController {

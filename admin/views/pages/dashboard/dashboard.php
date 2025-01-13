@@ -15,6 +15,8 @@ $bookController = new BookController();  // Instantiate BookController
 // Fetch the total classes
 $totalKelasResponse = $kelasController->gettotalkelas();
 
+$monthlyOrdersResponse = json_decode($invoicesController->getMonthlyOrders(), true);
+$monthlyOrdersData = $monthlyOrdersResponse['success'] ? $monthlyOrdersResponse['data'] : array_fill(0, 12, 0);
 // Get the total users and mentors
 $totalUsersResponse = $userController->getTotalUser();
 $totalMentorsResponse = $mentorController->getTotalMentor();
@@ -35,6 +37,12 @@ $metrics = [
     'total_kelas' => $totalKelasResponse['success'] ? $totalKelasResponse['data'] : 0,  // Added total classes
     'total_books' => $totalBooksResponse['success'] ? $totalBooksResponse['data'] : 0, // Added total books
 ];
+
+session_start();
+if (!isset($_SESSION['admin_id'])) {
+    header('Location: ../../../views/pages/login/login.php');
+    exit();
+}
 
 // Process invoices to calculate metrics
 if ($invoicesResponse['success'] && isset($invoicesResponse['data'])) {
@@ -59,6 +67,7 @@ if ($invoicesResponse['success'] && isset($invoicesResponse['data'])) {
     <title>Dashboard</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../../../assets/css/dashboard/dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         .empty-state {
             text-align: center;
@@ -114,10 +123,10 @@ if ($invoicesResponse['success'] && isset($invoicesResponse['data'])) {
         }
 
         .metrics-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr); 
-        gap: 1.5rem;
-        margin-top: 2rem;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-top: 2rem;
         }
 
         @media (max-width: 768px) {
@@ -131,7 +140,6 @@ if ($invoicesResponse['success'] && isset($invoicesResponse['data'])) {
                 grid-template-columns: 1fr;
             }
         }
-
 
         .metric-card {
             background: white;
@@ -151,6 +159,19 @@ if ($invoicesResponse['success'] && isset($invoicesResponse['data'])) {
             font-size: 1.875rem;
             font-weight: 600;
             color: #111827;
+        }
+
+        .chart-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-top: 3rem;
+        }
+
+        #salesChart {
+            width: 90% !important; /* Reduced width */
+            margin: 0 auto; /* Center the chart */
         }
     </style>
 </head>
@@ -179,64 +200,56 @@ if ($invoicesResponse['success'] && isset($invoicesResponse['data'])) {
                 </div>
                 <div class="metric-card">
                     <div class="title">Total Kelas</div>
-                    <div class="value"><?php echo number_format($metrics['total_kelas']); ?></div>  <!-- Total Kelas -->
+                    <div class="value"><?php echo number_format($metrics['total_kelas']); ?></div>
                 </div>
                 <div class="metric-card">
                     <div class="title">Total Books</div>
-                    <div class="value"><?php echo number_format($metrics['total_books']); ?></div>  <!-- Total Books -->
+                    <div class="value"><?php echo number_format($metrics['total_books']); ?></div>
                 </div>
+            </div>
+
+            <div class="chart-card">
+                <canvas id="salesChart"></canvas>
             </div>
         </div>
     </div>
 
     <script>
-        const modal = document.getElementById('updateInvoiceStatusModal');
-        const invoiceIdInput = document.getElementById('invoiceId');
-        const paymentStatusSelect = document.getElementById('paymentStatus');
-        const approvalStatusSelect = document.getElementById('approvalStatus');
-
-        function openModal(invoiceId, currentPaymentStatus, currentApproval) {
-            invoiceIdInput.value = invoiceId;
-            paymentStatusSelect.value = currentPaymentStatus || 'menunggu pembayaran';
-            approvalStatusSelect.value = currentApproval || '';
-            modal.style.display = 'block';
-        }
-
-        function closeModal() {
-            modal.style.display = 'none';
-        }
-
-        window.onclick = function(event) {
-            if (event.target === modal) {
-                closeModal();
+     const ctx = document.getElementById('salesChart').getContext('2d');
+const salesChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+        datasets: [{
+            label: 'Monthly Orders',
+            data: <?php echo json_encode($monthlyOrdersData); ?>,
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 2
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'top',
+            },
+            title: {
+                display: true,
+                text: 'Monthly Orders This Year'
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    stepSize: 1,
+                    precision: 0
+                }
             }
         }
-
-        // Submit form with AJAX
-        const form = document.getElementById('updateInvoiceStatusForm');
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const formData = new FormData(form);
-
-            fetch('', { // Empty string means submit to the same page
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Invoice status updated successfully!');
-                        closeModal();
-                        location.reload();
-                    } else {
-                        alert('Failed to update invoice status: ' + data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred. Please try again.');
-                });
-        });
+    }
+});
     </script>
 </body>
 

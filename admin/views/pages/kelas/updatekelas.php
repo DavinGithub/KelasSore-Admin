@@ -11,52 +11,55 @@ $bookController = new BookController();
 // Get all mentors and books for dropdowns
 $allMentors = $mentorController->getAllMentors();
 $allBooks = $bookController->getAllBooks();
+
 ?>
 
 <style>
 .form-container {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);  /* Three columns */
-    gap: 12px;  /* Slightly reduced gap between columns */
-    padding: 8px;  /* Reduced padding */
-    max-width: 90%; /* Slightly reduced max-width of the form */
+    grid-template-columns: repeat(2, 1fr);  /* Two columns */
+    gap: 24px;  /* Increased gap between columns */
+    padding: 16px;  /* Increased padding */
+    max-width: 80%; /* Slightly wider form */
     margin: 0 auto;
     box-sizing: border-box;
+    max-height: 85vh; /* Increased max-height for vertical scrolling */
+    overflow-y: auto; /* Enable vertical scrolling only on the form */
 }
 
 .form-group {
     display: flex;
     flex-direction: column;
-    margin-bottom: 6px; /* Reduced vertical spacing between form groups */
+    margin-bottom: 16px; /* Increased vertical spacing between form groups */
 }
 
 .form-group label {
     font-weight: bold;
-    font-size: 11px;  /* Slightly reduced font size */
+    font-size: 15px;  /* Larger font size */
 }
 
 .form-group input, .form-group select, .form-group textarea {
-    padding: 5px;  /* Reduced padding */
-    font-size: 11px;  /* Slightly reduced font size */
+    padding: 10px;  /* Increased padding */
+    font-size: 15px;  /* Larger font size */
     border: 1px solid #ddd;
     border-radius: 4px;
-    height: 28px;  /* Reduced height of input fields */
+    height: 45px;  /* Increased height of input fields */
 }
 
 .form-group textarea {
-    height: 55px;  /* Adjusted height for textarea */
+    height: 100px;  /* Increased height for textarea */
 }
 
 .form-actions {
-    grid-column: span 3;  /* Button spans across all 3 columns */
+    grid-column: span 2;  /* Button spans across all 2 columns */
     display: flex;
     justify-content: flex-end;
-    gap: 8px;  /* Slightly reduced gap between buttons */
+    gap: 16px;  /* Increased gap between buttons */
 }
 
 .btn-primary, .btn-secondary {
-    padding: 6px 12px;  /* Padding for buttons remains the same */
-    font-size: 12px;  /* Font size for buttons remains the same */
+    padding: 10px 20px;  /* Increased padding for buttons */
+    font-size: 16px;  /* Larger font size for buttons */
     border: none;
     border-radius: 4px;
     cursor: pointer;
@@ -73,42 +76,40 @@ $allBooks = $bookController->getAllBooks();
 }
 
 fieldset {
-    grid-column: span 3;
-    padding: 10px;  /* Keeping the padding here as is */
+    grid-column: span 2;
+    padding: 16px;  /* Increased padding */
     border: 1px solid #ddd;
     border-radius: 4px;
-    margin-top: 8px;
+    margin-top: 16px; /* Increased top margin */
 }
 
 legend {
     font-weight: bold;
-    font-size: 12px;  /* Slightly reduced font size */
+    font-size: 16px;  /* Larger font size */
 }
 
 .form-group input[type="file"] {
-    padding: 3px;  /* Reduced padding */
-    font-size: 11px;  /* Slightly reduced font size */
+    padding: 8px;  /* Increased padding */
+    font-size: 15px;  /* Larger font size */
 }
 
 .modal-content {
-    position: fixed; /* Fix the modal's position relative to the viewport */
-    top: 0; /* Set the top position to keep it fixed near the top of the screen */
-    left: 50%; /* Center the modal horizontally */
-    transform: translateX(-50%) translateY(-30px); /* Adjusted to make modal slightly higher */
-    max-width: 900px; /* Slightly reduced max-width */
-    padding: 18px;  /* Slightly reduced padding */
-    overflow: auto;
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%) translateY(-30px);
+    max-width: 900px;
+    padding: 24px;  /* Increased padding */
     box-sizing: border-box;
-    z-index: 9999; /* Ensure it appears above other content */
+    z-index: 9999;
+    max-height: 90vh;  /* Allow modal content to grow */
+    overflow: hidden;  /* Disable scrolling for the modal */
 }
 
-.close {
-    font-size: 22px; /* Slightly reduced font size */
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    cursor: pointer;
+.modal-content .close {
+    display: none; /* Hide the close button */
 }
+
 </style>
 
 
@@ -156,8 +157,8 @@ legend {
                 </select>
             </div>
             <div class="form-group">
-                <label for="updateKurikulum">Kurikulum:</label>
-                <input type="text" name="kurikulum" id="updateKurikulum" required>
+                <label for="updateKurikulum">Deskripsi 2:</label>
+                <textarea name="kurikulum" rows="2" id="updateKurikulum" required></textarea>     
             </div>
             <div class="form-group">
                 <label for="updatePrice">Harga:</label>
@@ -209,13 +210,13 @@ legend {
                 </select>
             </div>
 
-            <!-- Sixth Row -->
             <fieldset class="form-group">
-                <legend>Apa yang Akan Dipelajari:</legend>
-                <input type="text" name="what_will_learn_1" id="updateWhatWillLearn1" placeholder="Topik 1" required>
-                <input type="text" name="what_will_learn_2" id="updateWhatWillLearn2" placeholder="Topik 2" required>
-                <input type="text" name="what_will_learn_3" id="updateWhatWillLearn3" placeholder="Topik 3" required>
-            </fieldset>
+                        <legend>Kurikulum</legend>
+                        <textarea name="what_will_learn_1" id="updateWhatWillLearn1" placeholder="Kurikulum 1" required style="margin-bottom: 10px;"></textarea>
+                        <textarea name="what_will_learn_2" id="updateWhatWillLearn2" placeholder="Kurikulum 2" required style="margin-bottom: 10px;"></textarea>
+                        <textarea name="what_will_learn_3" id="updateWhatWillLearn3" placeholder="Kurikulum 3" required style="margin-bottom: 10px;"></textarea>
+                    </fieldset>
+
 
             <!-- Seventh Row -->
             <div class="form-group">

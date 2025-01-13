@@ -38,6 +38,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+session_start();
+if (!isset($_SESSION['admin_id'])) {
+    header('Location: ../../../views/pages/login/login.php');
+    exit();
+}
+
+
 // Fetch all books
 $books = $bookController->getAllBooks();
 ?>

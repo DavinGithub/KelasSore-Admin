@@ -2,12 +2,10 @@
 require_once dirname(__FILE__) . '/../../../controllers/KelasController.php';
 require_once dirname(__FILE__) . '/../../../controllers/BookController.php';
 
-// Initialize controllers
 $kelasController = new KelasController();
 $bukuController = new BookController();
 $action = isset($_GET['action']) ? $_GET['action'] : 'list';
 
-// Get all books
 $allBooks = $bukuController->getAllBooks();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'create') {
@@ -46,7 +44,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'create') {
     }
 }
 
-// Handle form submission for update
+session_start();
+if (!isset($_SESSION['admin_id'])) {
+    header('Location: ../../../views/pages/login/login.php');
+    exit();
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'update') {
     $id = $_POST['id'];
     $data = [
@@ -114,7 +117,6 @@ $deals = $kelasController->getAllKelas();
 
 <body>
     <?php include '../../../views/layout/sidebar.php'; ?>
-
     <div class="main-content">
         <div class="container">
             <?php if (isset($errorMessage)): ?>
@@ -130,7 +132,7 @@ $deals = $kelasController->getAllKelas();
                 </a>
             </div>
 
-            <div class="deals-table">
+                <div class="deals-table">
                 <div class="deals-header">
                     <h2>Daftar Kelas</h2>
                 </div>
@@ -177,9 +179,8 @@ $deals = $kelasController->getAllKelas();
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
-                </table>
-            </div>
-
+                 </table>
+                </div>
             <?php include 'updatekelas.php'; ?>
         </div>
     </div>
@@ -217,5 +218,4 @@ $deals = $kelasController->getAllKelas();
         }
     </script>
 </body>
-
 </html>

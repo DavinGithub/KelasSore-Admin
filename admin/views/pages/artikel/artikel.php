@@ -11,6 +11,12 @@ if (!empty($artikels)) {
     });
 }
 
+session_start();
+if (!isset($_SESSION['admin_id'])) {
+    header('Location: ../../../views/pages/login/login.php');
+    exit();
+}
+
 // Handle DELETE request
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'delete') {
     $artikelId = $_POST['id'];
